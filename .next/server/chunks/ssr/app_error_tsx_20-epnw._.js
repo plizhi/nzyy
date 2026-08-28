@@ -1,3 +1,0 @@
-module.exports=[78141,a=>{"use strict";var b=a.i(87924),c=a.i(72131);a.s(["default",0,function({error:a}){return(0,c.useEffect)(()=>{(a.message.includes("Invalid Server Action")||a.message.includes("cannot be found")||a.digest&&a.digest.includes("INVALID_SERVER_ACTION"))&&(console.warn("检测到客户端版本过期，正在自动刷新页面..."),window.location.reload())},[a]),(0,b.jsxs)("div",{style:{padding:"20px",textAlign:"center"},children:[(0,b.jsx)("h2",{children:"遇到一点小问题，正在为您自动恢复..."}),(0,b.jsxs)("p",{children:["如果页面长时间未响应，请手动"," ",(0,b.jsx)("button",{onClick:()=>window.location.reload(),children:"点击刷新"})]})]})}])}];
-
-//# sourceMappingURL=app_error_tsx_20-epnw._.js.map

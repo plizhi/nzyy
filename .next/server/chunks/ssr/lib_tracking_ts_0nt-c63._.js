@@ -1,3 +1,0 @@
-module.exports=[66481,a=>{"use strict";function b(a,b){}a.s(["trackEntryClick",0,function(a){b("三入口点击",{入口名称:a})},"trackFeelingSubmit",0,function(a){b("感受提交",{文本长度:a})},"trackIntentSkip",0,function(){b("初心文本跳过")},"trackIntentStart",0,function(a){b("初心交互开始",{来源页面:a})},"trackIntentSubmit",0,function(a){b("初心文本提交",{文本长度:a})},"trackPosterGenerate",0,function(a){b("海报生成",{报告ID:a})},"trackPosterShare",0,function(a){b("海报分享",{分享渠道:a})},"trackReportGenerate",0,function(a,c,d){b("报告生成",{共鸣度分数:a,是否跳过文本:c,报告ID:d})},"trackScoreComplete",0,function(a){b("评分完成",{分数:a})},"trackToolClick",0,function(a){b("工具入口点击",{工具名称:a})}])}];
-
-//# sourceMappingURL=lib_tracking_ts_0nt-c63._.js.map
