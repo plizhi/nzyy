@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+      <section className="max-w-2xl mx-auto px-6 py-20">
         <h1 className="text-2xl sm:text-3xl font-bold text-[#78350f] mb-8 text-center">
           关于我们
         </h1>

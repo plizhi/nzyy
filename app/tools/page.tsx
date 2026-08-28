@@ -10,7 +10,7 @@ export default function ToolsPage() {
 
   return (
     <div className="min-h-screen">
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+      <section className="max-w-2xl mx-auto px-6 py-20">
         <h1 className="text-2xl sm:text-3xl font-bold text-[#78350f] mb-4 text-center">
           落地工具
         </h1>
@@ -121,7 +121,7 @@ export default function ToolsPage() {
       </section>
 
       {/* 底部导航 */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8 border-t border-[#f59e0b]/10">
+      <section className="max-w-2xl mx-auto px-6 py-12 border-t border-[#f59e0b]/10">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <Link
             href="/theory"

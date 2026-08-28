@@ -330,7 +330,7 @@ export default function IntentPage() {
 
   return (
     <div className="min-h-screen">
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+      <section className="max-w-2xl mx-auto px-6 py-16">
         <h1 className="text-2xl font-bold text-[#78350f] mb-2 text-center">
           育儿初心
         </h1>
@@ -410,7 +410,7 @@ export default function IntentPage() {
 
         {/* 步骤2: 写下初心 */}
         {step === 2 && (
-          <div className="max-w-xl mx-auto">
+          <div className="max-w-lg mx-auto">
             <div className="mb-6 p-4 bg-[#fef3c7] rounded-lg border border-[#f59e0b]/20">
               <p className="text-xs text-[#78350f]/60">
                 您的输入仅用于生成本次报告。我们不会将您的初心内容上传至服务器或用于其他用途。关闭页面后，本次内容将自动清除。
@@ -444,7 +444,7 @@ export default function IntentPage() {
 
         {/* 步骤3: 展示初心 + 评分 */}
         {step === 3 && (
-          <div className="max-w-xl mx-auto">
+          <div className="max-w-lg mx-auto">
             <h2 className="text-lg font-semibold text-[#78350f] mb-4 text-center">
               内在结构养育的育儿初心
             </h2>
@@ -502,7 +502,7 @@ export default function IntentPage() {
 
         {/* 步骤4: 表达感受 */}
         {step === 4 && (
-          <div className="max-w-xl mx-auto">
+          <div className="max-w-lg mx-auto">
             <h2 className="text-lg font-semibold text-[#78350f] mb-4">
               看完这套育儿初心，你有什么想说的？
             </h2>
@@ -531,7 +531,7 @@ export default function IntentPage() {
 
         {/* 步骤5: 报告 */}
         {step === 5 && (
-          <div className="max-w-xl mx-auto">
+          <div className="max-w-lg mx-auto">
             <h2 className="text-xl font-bold text-[#78350f] mb-6 text-center">
               初心共鸣报告
             </h2>

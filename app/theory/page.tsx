@@ -116,8 +116,8 @@ export default function TheoryPage() {
   return (
     <div className="min-h-screen">
       {/* 六大内在结构 */}
-      <section className="py-16 sm:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 sm:py-28">
+        <div className="max-w-2xl mx-auto px-6">
           <div className="text-center mb-12">
             <h1 className="text-3xl sm:text-4xl font-bold text-[#78350f] mb-3">
               心灵宫殿
@@ -195,8 +195,8 @@ export default function TheoryPage() {
       </section>
 
       {/* 十大心神能力 */}
-      <section className="py-16 sm:py-24 bg-white/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 sm:py-28 bg-white/50">
+        <div className="max-w-2xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-[#78350f] mb-3">
               十大心神能力
@@ -248,8 +248,8 @@ export default function TheoryPage() {
       </section>
 
       {/* 结构与能力的关系 */}
-      <section className="py-16 sm:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 sm:py-28">
+        <div className="max-w-2xl mx-auto px-6">
           <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#78350f] mb-2">
               结构与能力的关系
@@ -290,7 +290,7 @@ export default function TheoryPage() {
 
       {/* 底部导航 */}
       <section className="py-8 border-t border-[#f59e0b]/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 flex justify-between items-center">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 flex justify-between items-center">
           <Link href="/intent" className="text-[#f59e0b] hover:text-[#d97706] transition-colors text-sm font-medium flex items-center gap-1 group">
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
             育儿初心
