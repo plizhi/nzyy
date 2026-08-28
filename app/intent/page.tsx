@@ -249,24 +249,25 @@ export default function IntentPage() {
       ctx.fillText(line, 40, startY + i * lineHeight);
     });
 
-    // 共鸣度标签
-    const tagY = 320;
+    // 共鸣度区
     ctx.font = "bold 14px sans-serif";
     ctx.fillStyle = "#f59e0b";
     ctx.textAlign = "center";
-    ctx.fillText(`初心共鸣度`, 200, tagY);
+    ctx.fillText("初心共鸣度", 200, 300);
 
     // 共鸣度数字
     ctx.font = "bold 48px sans-serif";
     ctx.fillStyle = "#78350f";
-    ctx.fillText(`${resonance}%`, 200, tagY + 50);
+    ctx.fillText(`${resonance}%`, 200, 355);
 
     // 标签
+    let contentBottomY = 385;
     if (matchedTags.length > 0) {
       ctx.font = "11px sans-serif";
       ctx.fillStyle = "#92400e";
       const tagsText = matchedTags.join(" · ");
-      ctx.fillText(tagsText, 200, tagY + 80);
+      ctx.fillText(tagsText, 200, 385);
+      contentBottomY = 400;
     }
 
     // 独特视角
@@ -287,23 +288,25 @@ export default function IntentPage() {
       }
       if (uLine) uniqueLines.push(uLine);
       uniqueLines.slice(0, 2).forEach((l, i) => {
-        ctx.fillText(l, 40, tagY + 105 + i * 16);
+        ctx.fillText(l, 40, contentBottomY + 10 + i * 16);
       });
+      contentBottomY = contentBottomY + 10 + Math.min(uniqueLines.length, 2) * 16;
     }
 
     // 底部二维码占位
+    const qrY = Math.max(450, contentBottomY + 20);
     ctx.fillStyle = "#fef3c7";
-    ctx.fillRect(150, 470, 100, 100);
+    ctx.fillRect(150, qrY, 100, 100);
     ctx.fillStyle = "#78350f";
     ctx.font = "10px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("扫码写下你的", 200, 505);
-    ctx.fillText("育儿初心", 200, 520);
+    ctx.fillText("扫码写下你的", 200, qrY + 55);
+    ctx.fillText("育儿初心", 200, qrY + 70);
 
     // 底部金句
     ctx.font = "10px sans-serif";
     ctx.fillStyle = "#78350f";
-    ctx.fillText("内在结构养育", 200, 565);
+    ctx.fillText("内在结构养育", 200, qrY + 95);
 
     trackPosterGenerate(reportID);
     setPosterGenerated(true);

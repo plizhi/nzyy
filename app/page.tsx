@@ -88,34 +88,61 @@ export default function Home() {
     <div className="min-h-screen">
       {/* 首屏 */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
-        <div className="max-w-2xl">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#78350f] mb-4 leading-tight">
-            内在结构养育
-          </h1>
-          <p className="text-lg sm:text-xl text-[#78350f]/70 mb-6">
-            一套以“心神”为核心的育儿方法论
-          </p>
-          <p className="text-base sm:text-lg text-[#78350f]/60 mb-8 leading-relaxed">
-            从对齐初心，到构建系统，再到落地行动——
-            <br className="hidden sm:block" />
-            帮助孩子成为一个内在稳固、有力量、能享受生命的人。
-          </p>
-          <blockquote className="border-l-4 border-[#f59e0b] pl-4 mb-8 italic text-[#78350f]/70">
-            你对待孩子的方式，就是孩子内心世界的建筑图纸。
-          </blockquote>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="/intent"
-              className="inline-flex items-center justify-center px-6 py-3 bg-[#f59e0b] text-white font-medium rounded-lg hover:bg-[#d97706] transition-colors"
-            >
-              写下我的育儿初心
-            </Link>
-            <Link
-              href="/theory"
-              className="inline-flex items-center justify-center px-6 py-3 border border-[#f59e0b] text-[#f59e0b] font-medium rounded-lg hover:bg-[#fef3c7] transition-colors"
-            >
-              了解内在结构
-            </Link>
+        <div className="flex flex-col lg:flex-row items-center gap-12">
+          <div className="flex-1 max-w-xl">
+            <h1 className="text-3xl sm:text-4xl font-bold text-[#78350f] mb-4 leading-tight">
+              内在结构养育
+            </h1>
+            <p className="text-lg sm:text-xl text-[#78350f]/70 mb-6">
+              一套以"心神"为核心的专业育儿方法论
+            </p>
+            <p className="text-base sm:text-lg text-[#78350f]/60 mb-8 leading-relaxed">
+              从对齐初心，到构建系统，再到落地行动——
+              <br className="hidden sm:block" />
+              帮助孩子成为一个内在稳固、有力量、能享受生命的人。
+            </p>
+            <blockquote className="border-l-4 border-[#f59e0b] pl-4 mb-8 italic text-[#78350f]/70">
+              你对待孩子的方式，就是孩子内心世界的建筑图纸。
+            </blockquote>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/intent"
+                className="inline-flex items-center justify-center px-6 py-3 bg-[#f59e0b] text-white font-medium rounded-lg hover:bg-[#d97706] transition-colors"
+              >
+                写下我的育儿初心
+              </Link>
+              <Link
+                href="/theory"
+                className="inline-flex items-center justify-center px-6 py-3 border border-[#f59e0b] text-[#f59e0b] font-medium rounded-lg hover:bg-[#fef3c7] transition-colors"
+              >
+                了解内在结构
+              </Link>
+            </div>
+          </div>
+
+          {/* 心灵宫殿示意图 */}
+          <div className="hidden lg:flex flex-col items-center">
+            <div className="relative w-56 h-56">
+              <div className="absolute inset-0 rounded-full border-2 border-[#f59e0b]/20" />
+              <div className="absolute inset-3 rounded-full border border-[#f59e0b]/15" />
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#fef3c7] rounded-full text-xs text-[#78350f] font-medium whitespace-nowrap">
+                供能系统
+              </div>
+              <div className="absolute bottom-3 left-3 px-2 py-1 bg-[#fef3c7] rounded-full text-xs text-[#78350f] font-medium">
+                保护系统
+              </div>
+              <div className="absolute bottom-3 right-3 px-2 py-1 bg-[#fef3c7] rounded-full text-xs text-[#78350f] font-medium">
+                定向系统
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-14 h-14 bg-[#f59e0b] rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-white text-xs font-medium">心神</span>
+                </div>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-[#78350f]/30 text-center">
+              心灵宫殿示意图
+            </p>
           </div>
         </div>
       </section>
@@ -144,11 +171,11 @@ export default function Home() {
 
       {/* 理念区 */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
-        <h2 className="text-xl sm:text-2xl font-bold text-[#78350f] mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-[#78350f] mb-2">
           什么是内在结构养育？
         </h2>
         <p className="text-[#78350f]/70 leading-relaxed mb-8 max-w-3xl">
-          内在结构养育，是一套以“心神”为核心，以“成全孩子”和“构建彼此滋养的亲子关系”为双翼，通过系统培育孩子内在六大心理结构及十大心神能力，帮助孩子成为一个内在稳固、有力量、能享受生命的人的心灵建造体系。
+          内在结构养育，是一套以"心神"为核心，以"成全孩子"和"构建彼此滋养的亲子关系"为双翼，通过系统培育孩子内在六大心理结构及十大心神能力，帮助孩子成为一个内在稳固、有力量、能享受生命的人的心灵建造体系。
         </p>
         <div className="grid sm:grid-cols-3 gap-4">
           {genes.map((gene, i) => (
@@ -165,9 +192,17 @@ export default function Home() {
 
       {/* 初心区预览 */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
-        <h2 className="text-xl sm:text-2xl font-bold text-[#78350f] mb-6">
-          养育的北极星——育儿初心
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#78350f]">
+            养育的北极星——育儿初心
+          </h2>
+          <Link
+            href="/intent"
+            className="text-sm text-[#f59e0b] hover:underline whitespace-nowrap"
+          >
+            写下你的育儿初心 →
+          </Link>
+        </div>
         <div className="grid sm:grid-cols-2 gap-8">
           <div>
             <h3 className="text-sm font-medium text-[#f59e0b] mb-3">
@@ -199,34 +234,21 @@ export default function Home() {
             </ul>
           </div>
         </div>
-        <div className="mt-8">
-          <Link
-            href="/intent"
-            className="inline-flex items-center text-[#f59e0b] hover:underline"
-          >
-            写下你的育儿初心
-            <svg
-              className="w-4 h-4 ml-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </Link>
-        </div>
       </section>
 
       {/* 理论区预览 */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
-        <h2 className="text-xl sm:text-2xl font-bold text-[#78350f] mb-6">
-          心灵宫殿——六大内在结构
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#78350f]">
+            心灵宫殿——六大内在结构
+          </h2>
+          <Link
+            href="/theory"
+            className="text-sm text-[#f59e0b] hover:underline whitespace-nowrap"
+          >
+            查看完整理论 →
+          </Link>
+        </div>
         <div className="bg-white rounded-xl border border-[#f59e0b]/10 p-6 mb-6">
           <div className="text-center mb-6">
             <div className="inline-block px-4 py-2 bg-[#fef3c7] rounded-full text-sm font-medium text-[#78350f]">
@@ -266,27 +288,6 @@ export default function Home() {
             </span>
           ))}
         </div>
-        <div className="text-center">
-          <Link
-            href="/theory"
-            className="inline-flex items-center text-[#f59e0b] hover:underline"
-          >
-            查看完整理论
-            <svg
-              className="w-4 h-4 ml-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </Link>
-        </div>
       </section>
 
       {/* 彼此滋养区 */}
@@ -317,7 +318,7 @@ export default function Home() {
         <h2 className="text-xl sm:text-2xl font-bold text-[#78350f] mb-6 text-center">
           落地工具——让理论进入日常
         </h2>
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
           <div className="p-6 bg-white rounded-xl border border-[#f59e0b]/10">
             <h3 className="text-lg font-semibold text-[#78350f] mb-2">
               望杏成林
