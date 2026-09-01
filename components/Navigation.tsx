@@ -12,69 +12,89 @@ const navItems = [
   { label: "关于", href: "/about" },
 ];
 
-export default function Navigation() {
+export default function Navigation({
+  hideOnPaths = [],
+}: {
+  hideOnPaths?: string[];
+}) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  if (hideOnPaths.includes(pathname)) {
+    return null;
+  }
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#FFFBF5]/95 backdrop-blur-sm border-b border-[#f59e0b]/10">
-      <nav className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="text-[#78350f] font-semibold text-lg">
-          内在结构养育
-        </Link>
-
-        {/* Desktop nav */}
-        <ul className="hidden sm:flex items-center gap-6">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`text-sm transition-colors ${
-                  pathname === item.href
-                    ? "text-[#f59e0b] font-medium"
-                    : "text-[#78350f]/70 hover:text-[#f59e0b]"
-                }`}
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        {/* Mobile hamburger */}
-        <button
-          className="sm:hidden p-2 text-[#78350f]"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="菜单"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            {menuOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-        </button>
-      </nav>
-
-      {/* Mobile menu */}
+    <>
+      {/* Mobile backdrop */}
       {menuOpen && (
-        <div className="sm:hidden bg-[#FFFBF5] border-t border-[#f59e0b]/10">
+        <div
+          className="fixed inset-0 z-40 bg-black/20 sm:hidden"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#FFFBF5]/95 backdrop-blur-sm border-b border-[#f59e0b]/10">
+        <nav className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          <Link href="/" className="text-[#78350f] font-semibold text-lg">
+            内在结构养育
+          </Link>
+
+          {/* Desktop nav */}
+          <ul className="hidden sm:flex items-center gap-6">
+            {navItems.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`text-sm transition-colors ${
+                    pathname === item.href
+                      ? "text-[#f59e0b] font-medium"
+                      : "text-[#78350f]/70 hover:text-[#f59e0b]"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Mobile hamburger */}
+          <button
+            className="sm:hidden p-2 text-[#78350f] relative z-50"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="菜单"
+          >
+            <svg
+              className="w-5 h-5 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              {menuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
+        </nav>
+
+        {/* Mobile menu with transition */}
+        <div
+          className={`sm:hidden bg-[#FFFBF5] border-t border-[#f59e0b]/10 overflow-hidden transition-all duration-300 ${
+            menuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
           <ul className="px-4 py-2">
             {navItems.map((item) => (
               <li key={item.href}>
@@ -93,7 +113,7 @@ export default function Navigation() {
             ))}
           </ul>
         </div>
-      )}
-    </header>
+      </header>
+    </>
   );
 }

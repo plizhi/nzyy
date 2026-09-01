@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const footerNav = [
   { label: "初心", href: "/intent" },
@@ -6,8 +9,17 @@ const footerNav = [
   { label: "工具", href: "/tools" },
 ];
 
-export default function Footer() {
+export default function Footer({
+  hideOnPaths = [],
+}: {
+  hideOnPaths?: string[];
+}) {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
+
+  if (hideOnPaths.includes(pathname)) {
+    return null;
+  }
 
   return (
     <footer className="bg-[#78350f]/5 mt-20">
@@ -35,6 +47,9 @@ export default function Footer() {
 
         <div className="text-center text-xs text-[#78350f]/40">
           © {currentYear} 内在结构养育 · 保留所有权利
+        </div>
+        <div className="text-center text-xs text-[#78350f]/30 mt-2">
+          京ICP备2026026935号-2
         </div>
       </div>
     </footer>

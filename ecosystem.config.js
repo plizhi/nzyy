@@ -11,6 +11,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 3009,
+        DATABASE_URL: 'postgresql://postgres@127.0.0.1:5432/analytics',
       },
       error_file: './logs/error.log',
       out_file: './logs/out.log',

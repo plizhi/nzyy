@@ -30,9 +30,9 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#FFFBF5] text-[#78350f] antialiased">
-        <Navigation />
-        <main className="pt-14">{children}</main>
-        <Footer />
+        <Navigation hideOnPaths={["/intent"]} />
+        <main>{children}</main>
+        <Footer hideOnPaths={["/intent"]} />
       </body>
     </html>
   );

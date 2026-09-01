@@ -4,6 +4,18 @@ type Category = keyof typeof keywordsData;
 type SubCategory<K extends Category> = keyof (typeof keywordsData)[K];
 type Keyword = string;
 
+const NEGATIONS = ["不", "没", "无", "非", "无法", "难以", "不会", "不是", "未曾", "尚未"];
+
+function hasNegationBefore(text: string, keyword: string, lookback: number = 4): boolean {
+  const lowerText = text.toLowerCase();
+  const lowerKw = keyword.toLowerCase();
+  const index = lowerText.indexOf(lowerKw);
+  if (index === -1) return false;
+
+  const beforeText = text.slice(Math.max(0, index - lookback), index);
+  return NEGATIONS.some((neg) => beforeText.includes(neg));
+}
+
 export interface MatchResult {
   category: Category;
   subCategory: string;
@@ -12,14 +24,15 @@ export interface MatchResult {
 
 export function matchKeywords(text: string): MatchResult[] {
   const results: MatchResult[] = [];
-  const normalizedText = text.toLowerCase();
 
   for (const category of Object.keys(keywordsData) as Category[]) {
     const subCategories = keywordsData[category] as Record<string, Keyword[]>;
     for (const subCategory of Object.keys(subCategories)) {
       const keywords = subCategories[subCategory];
-      const matched = keywords.filter((kw: string) =>
-        normalizedText.includes(kw.toLowerCase())
+      const matched = keywords.filter(
+        (kw: string) =>
+          text.toLowerCase().includes(kw.toLowerCase()) &&
+          !hasNegationBefore(text, kw)
       );
       if (matched.length > 0) {
         results.push({

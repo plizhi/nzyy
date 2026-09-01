@@ -44,7 +44,9 @@ export default function ToolsPage() {
               亲子成长记录、情绪命名、习惯养成、成长瞬间捕捉。服务于六大内在结构的日常滋养，覆盖多个心神能力的敏感期。
             </p>
             <a
-              href="#"
+              href="https://wxcl.nzyy.cc"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => handleToolClick("望杏成林")}
               className="inline-flex items-center px-5 py-2.5 bg-[#f59e0b] text-white text-sm font-medium rounded-lg hover:bg-[#d97706] transition-colors"
             >
@@ -90,7 +92,9 @@ export default function ToolsPage() {
               评估十大心神能力发展水平、定位当前发展阶段、获得个性化养育建议。
             </p>
             <a
-              href="#"
+              href="https://lzti.nzyy.cc"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => handleToolClick("荔枝测评")}
               className="inline-flex items-center px-5 py-2.5 bg-[#f59e0b] text-white text-sm font-medium rounded-lg hover:bg-[#d97706] transition-colors"
             >
