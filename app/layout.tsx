@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "内在结构养育 | 看见孩子，更理解孩子",
@@ -25,14 +23,12 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="bg-[#FFFBF5] text-[#78350f] antialiased">
-        <Navigation hideOnPaths={["/intent"]} />
-        <main>{children}</main>
-        <Footer hideOnPaths={["/intent"]} />
+      <body style={{ backgroundColor: "#FBF7F1", color: "#3E2C2C" }}>
+        {children}
       </body>
     </html>
   );
