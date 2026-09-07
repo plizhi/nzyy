@@ -291,15 +291,15 @@ export default function TheoryPage() {
       {/* 底部导航 */}
       <section className="py-8 border-t border-[#f59e0b]/10">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 flex justify-between items-center">
-          <Link href="/intent" className="text-[#f59e0b] hover:text-[#d97706] transition-colors text-sm font-medium flex items-center gap-1 group">
+          <Link href="/intro" className="text-[#f59e0b] hover:text-[#d97706] transition-colors text-sm font-medium flex items-center gap-1 group">
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
-            育儿初心
+            内在结构养育
           </Link>
           <Link href="/" className="text-[#78350f]/40 hover:text-[#78350f]/60 transition-colors text-sm">
             返回首页
           </Link>
-          <Link href="/tools" className="text-[#f59e0b] hover:text-[#d97706] transition-colors text-sm font-medium flex items-center gap-1 group">
-            落地工具
+          <Link href="/story" className="text-[#f59e0b] hover:text-[#d97706] transition-colors text-sm font-medium flex items-center gap-1 group">
+            创始人故事
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </Link>
         </div>
