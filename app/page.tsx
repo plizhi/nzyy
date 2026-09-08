@@ -157,13 +157,14 @@ export default function HomePage() {
             position: "relative",
           }}
         >
-          {/* 背景微光 */}
+          {/* 背景微光 - 慢呼吸效果 */}
           <div
+            className="breathing-glow"
             style={{
               position: "absolute",
               width: "600px",
               height: "600px",
-              background: "radial-gradient(circle, rgba(199, 109, 74, 0.04) 0%, rgba(251, 247, 241, 0) 70%)",
+              background: "radial-gradient(circle, rgba(199, 109, 74, 0.06) 0%, rgba(251, 247, 241, 0) 70%)",
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
@@ -363,12 +364,34 @@ export default function HomePage() {
                   <span>完全不符</span>
                   <span>非常符合</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", width: "100%", maxWidth: 420, gap: 12 }}>
+                <div className="ripple-container" style={{ display: "flex", justifyContent: "space-between", width: "100%", maxWidth: 420, gap: 12 }}>
                   {[1, 2, 3, 4, 5].map((value) => (
                     <button
                       key={value}
-                      onClick={() => handleAnswer(value)}
+                      onClick={(e) => {
+                        // 涟漪效果
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const ripple = document.createElement('span');
+                        ripple.style.cssText = `
+                          position: absolute;
+                          width: 20px;
+                          height: 20px;
+                          background: rgba(199, 109, 74, 0.4);
+                          border-radius: 50%;
+                          transform: scale(0);
+                          animation: ripple 0.6s ease-out forwards;
+                          pointer-events: none;
+                          left: ${e.clientX - rect.left - 10}px;
+                          top: ${e.clientY - rect.top - 10}px;
+                        `;
+                        e.currentTarget.style.position = 'relative';
+                        e.currentTarget.style.overflow = 'hidden';
+                        e.currentTarget.appendChild(ripple);
+                        setTimeout(() => ripple.remove(), 600);
+                        handleAnswer(value);
+                      }}
                       style={{
+                        position: 'relative',
                         flex: 1,
                         aspectRatio: "1",
                         border: "1.5px solid var(--divider)",
@@ -378,20 +401,21 @@ export default function HomePage() {
                         fontSize: "1.2rem",
                         color: colors.textSecondary,
                         cursor: "pointer",
-                        transition: "all 0.3s ease",
+                        transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        overflow: "hidden",
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = "#E89878";
                         e.currentTarget.style.color = colors.accent;
-                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.transform = "scale(1.08)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.borderColor = colors.divider;
                         e.currentTarget.style.color = colors.textSecondary;
-                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.transform = "scale(1)";
                       }}
                     >
                       {value}

@@ -71,7 +71,9 @@ export default function IntroPage() {
               { name: '自我意向', desc: '内在的自画像，对『我是怎样一个人』的整体评价。' },
               { name: '内化客体', desc: '内在的关系模板，重要他人互动方式在内心的烙印。' },
             ].map((item, i) => (
-              <div key={i} style={{ background: 'var(--card-bg)', padding: '32px 28px', borderRadius: 'var(--radius-m)', border: '1px solid rgba(234, 224, 213, 0.5)', boxShadow: 'var(--shadow-soft)', transition: 'transform 0.3s' }}>
+              <div key={i} className="stagger-fade-up" style={{ background: 'var(--card-bg)', padding: '32px 28px', borderRadius: 'var(--radius-m)', border: '1px solid rgba(234, 224, 213, 0.5)', boxShadow: 'var(--shadow-soft)', transition: 'transform 0.3s, box-shadow 0.3s', cursor: 'default' }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(62, 44, 44, 0.1)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}>
                 <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.3rem', color: 'var(--text-primary)', marginBottom: 12 }}>{item.name}</h4>
                 <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>{item.desc}</p>
               </div>
@@ -93,7 +95,9 @@ export default function IntroPage() {
               { stage: '初中阶段', ability: '心理韧性', exp: '过程虽苦，但我能掌管并相信努力' },
               { stage: '高中阶段', ability: '三观', exp: '我是谁，我相信什么，我为何而活' },
             ].map((item, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', background: 'var(--card-bg)', padding: '24px 32px', borderRadius: 'var(--radius-m)', borderLeft: '4px solid var(--accent-color)', boxShadow: 'var(--shadow-soft)', gap: 24 }}>
+              <div key={i} className="stagger-fade-up" style={{ display: 'flex', alignItems: 'center', background: 'var(--card-bg)', padding: '24px 32px', borderRadius: 'var(--radius-m)', borderLeft: '4px solid var(--accent-color)', boxShadow: 'var(--shadow-soft)', gap: 24, transition: 'transform 0.3s, box-shadow 0.3s' }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateX(4px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(62, 44, 44, 0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateX(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}>
                 <span style={{ fontSize: '0.9rem', color: 'var(--accent-color)', fontWeight: 500, minWidth: 140 }}>{item.stage}</span>
                 <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.2rem', fontWeight: 600, minWidth: 100 }}>{item.ability}</span>
                 <span style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', flex: 1 }}>{item.exp}</span>
