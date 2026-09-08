@@ -72,12 +72,23 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false);
   const [aiInsight, setAiInsight] = useState("");
   const [loadingInsight, setLoadingInsight] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   const totalQuestions = questions.length;
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // 沙漏等待后显示结果
+  useEffect(() => {
+    if (step === "result" && !showResult) {
+      const timer = setTimeout(() => {
+        setShowResult(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [step, showResult]);
 
   useEffect(() => {
     if (step !== "result" || answers.length < 9) return;
@@ -421,183 +432,202 @@ export default function HomePage() {
         </>
       )}
 
-      {/* 结果页 */}
-      {step === "result" && (
-        <div className="min-h-screen flex flex-col px-6 py-12">
-          <div className="max-w-2xl mx-auto w-full">
-
-            {/* 得分 */}
-            <div className="text-center mb-12">
-              <div className="mb-4">
-                <span className="text-6xl sm:text-8xl font-medium leading-none tracking-tight" style={{ color: colors.textPrimary }}>
-                  {score}
-                </span>
-                <span className="text-3xl sm:text-4xl" style={{ color: colors.textPrimary, opacity: 0.3 }}>%</span>
-              </div>
-              <p className="text-sm tracking-widest uppercase" style={{ color: colors.textSecondary }}>
-                综合共鸣度
-              </p>
-            </div>
-
-            {/* 1. 育儿初心完整表述 */}
-            <div className="mb-10">
-              <h3 className="text-xs tracking-widest uppercase mb-4" style={{ color: colors.textSecondary }}>
-                父母之爱子，则为之计长远
-              </h3>
-              <p className="text-sm mb-6" style={{ color: colors.textSecondary, lineHeight: 1.8 }}>
-                这个长远，一方面是孩子自己的路，另一方面是父母与孩子之间的连接。
-              </p>
-
-              <h4 className="text-xs tracking-widest uppercase mb-3" style={{ color: colors.textSecondary }}>
-                孩子成长在自己的路上，我们希望他——
-              </h4>
-              <div className="space-y-2 mb-6">
-                {成全孩子.map((item, i) => (
-                  <p key={i} className="text-sm" style={{ color: colors.textPrimary, lineHeight: 1.8 }}>
-                    {item.text}
-                  </p>
-                ))}
-              </div>
-
-              <h4 className="text-xs tracking-widest uppercase mb-3" style={{ color: colors.textSecondary }}>
-                在父母与孩子的连接上，可以彼此滋养——
-              </h4>
-              <div className="space-y-2">
-                {彼此滋养.map((item, i) => (
-                  <p key={i} className="text-sm" style={{ color: colors.textSecondary, lineHeight: 1.8 }}>
-                    <span style={{ color: colors.accent }}>{item.层次}</span>
-                    {"："}
-                    {item.核心}
-                  </p>
-                ))}
-              </div>
-            </div>
-
-            {/* 2. AI 解读 */}
-            <div style={{ backgroundColor: "#fff", borderRadius: 16, padding: 32, marginBottom: 32, textAlign: "left", boxShadow: "0 1px 3px rgba(62, 44, 44, 0.08)" }}>
-              {loadingInsight ? (
-                <p style={{ color: colors.textSecondary, fontSize: 16, lineHeight: 1.8 }}>
-                  解读生成中...
-                </p>
-              ) : aiInsight ? (
-                <p style={{ color: colors.textPrimary, fontSize: 18, lineHeight: 1.9 }}>
-                  {aiInsight}
-                </p>
-              ) : (
-                <p style={{ color: colors.textSecondary, fontSize: 16, lineHeight: 1.8 }}>
-                  解读生成中...
-                </p>
-              )}
-            </div>
-
-            {/* 3. 内在结构养育简介 */}
-            <div style={{ backgroundColor: "rgba(199, 109, 74, 0.08)", borderRadius: 16, padding: 24, marginBottom: 24, textAlign: "left" }}>
-              <h3 className="text-sm font-medium mb-3" style={{ color: colors.textPrimary }}>
-                什么是内在结构养育？
-              </h3>
-              <p className="text-sm mb-3" style={{ color: colors.textSecondary, lineHeight: 1.8 }}>
-                一套以"心神"为核心的育儿方法论。
-              </p>
-              <p className="text-sm mb-3" style={{ color: colors.textSecondary, lineHeight: 1.8 }}>
-                它的核心判断是：孩子学业问题的底层是心智，心神不稳，再多外力也只是治标不治本。
-              </p>
-              <p className="text-sm" style={{ color: colors.textSecondary, lineHeight: 1.8 }}>
-                关注两件事：第一，孩子成长在自己的路上，顺着他的规律养育，让他做自己人生的主人；第二，亲子关系不是父母单向付出，而是彼此滋养。
-              </p>
-            </div>
-
-            <div className="text-center mb-8">
-              <Link
-                href="/intro"
-                className="text-sm"
-                style={{ color: colors.accent, textDecoration: "none" }}
-              >
-                了解更多 →
-              </Link>
-            </div>
-
-            {/* 4. 过来人说 */}
-            <details style={{ background: "#fff", borderRadius: 16, border: `1px solid ${colors.divider}`, overflow: "hidden", marginBottom: 32 }}>
-              <summary
-                style={{
-                  padding: "20px",
-                  cursor: "pointer",
-                  listStyle: "none",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontWeight: 500,
-                  color: colors.textPrimary,
-                }}
-              >
-                <span>过来人说</span>
-                <svg style={{ width: 20, height: 20, color: colors.accent }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </summary>
-              <div style={{ padding: "0 20px 20px", borderTop: `1px solid ${colors.divider}` }}>
-                <p style={{ color: colors.textPrimary, fontSize: 14, lineHeight: 1.9, marginBottom: 12 }}>
-                  从女儿考上清华开始，不断地有亲朋好友向我和爱人请教育儿方面的经验。回看我们自己带给女儿的养育历程，曾经也有过很多养育上的疑问和困惑，那时候，爱人作为一名心理工作的专业人士，参阅了大量育儿方面的理论与典籍，再结合孩子成长的不同阶段不同表现，结合我们自己家庭的具体情况，逐渐形成了适合我们这样一个普通家庭的一些养育原则和方法。
-                </p>
-                <p style={{ color: colors.textPrimary, fontSize: 14, lineHeight: 1.9, marginBottom: 12 }}>
-                  我们发现，一直以来有些我们坚持和恪守的东西，正是孩子能够如其所是地成长成自己本来样子的土壤。
-                </p>
-                <p style={{ color: colors.textPrimary, fontSize: 14, lineHeight: 1.9, marginBottom: 12 }}>
-                  今天回看这些原则与方法，我们发现可以给那些与我们的曾经有相似状况的父母们，一些借鉴和引导。于是，我和爱人一起将我们从大量心理学典籍中学习到的，从我们的养育实践中沉淀积累到的，汇总成为一套独特的育儿方法论。
-                </p>
-                <p style={{ color: colors.accent, fontSize: 14, fontWeight: 500 }}>
-                  我们既是内在结构养育的创立者，更是践行者、受益者。也希望可以结识更多的同行者。
-                </p>
-              </div>
-            </details>
-
-            <div className="text-center mb-8">
-              <Link
-                href="/story"
-                className="text-sm"
-                style={{ color: colors.accent, textDecoration: "none" }}
-              >
-                朋大大自述 →
-              </Link>
-            </div>
-
-            {/* 5. 注册 + 分享 */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <button
-                style={{
-                  display: "block",
-                  padding: "16px 32px",
-                  backgroundColor: colors.accent,
-                  color: colors.bg,
-                  fontWeight: 500,
-                  borderRadius: 9999,
-                  textAlign: "center",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "1rem",
-                }}
-              >
-                注册 / 登录
-              </button>
-              <button
-                style={{
-                  display: "block",
-                  padding: "16px 32px",
-                  border: `1px solid ${colors.accent}`,
-                  color: colors.accent,
-                  fontWeight: 500,
-                  borderRadius: 9999,
-                  textAlign: "center",
-                  background: "transparent",
-                  cursor: "pointer",
-                  fontSize: "1rem",
-                }}
-              >
-                生成分享海报
-              </button>
-            </div>
-
+      {/* 沙漏等待 */}
+      {step === "result" && !showResult && (
+        <div style={{ position: "fixed", inset: 0, background: colors.bg, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", zIndex: 999 }}>
+          <div style={{ marginBottom: 40 }}>
+            <svg width="56" height="84" viewBox="0 0 56 84" style={{ animation: "gentleSway 3s ease-in-out infinite" }}>
+              <path d="M6 4 L50 4 L28 42 Z" fill="none" stroke="#C76D4A" strokeWidth="1.8" strokeLinejoin="round" opacity="0.7"/>
+              <path d="M6 80 L50 80 L28 42 Z" fill="none" stroke="#C76D4A" strokeWidth="1.8" strokeLinejoin="round" opacity="0.7"/>
+              <line x1="4" y1="4" x2="52" y2="4" stroke="#C76D4A" strokeWidth="2.5" strokeLinecap="round"/>
+              <line x1="4" y1="80" x2="52" y2="80" stroke="#C76D4A" strokeWidth="2.5" strokeLinecap="round"/>
+              <path style={{ transformOrigin: "50% 0%", animation: "drainTop 2.4s ease-in-out infinite" }} d="M9 8 L47 8 L29 39 L27 39 Z" fill="#C76D4A" opacity="0.85"/>
+              <path style={{ transformOrigin: "50% 100%", animation: "fillBottom 2.4s ease-in-out infinite" }} d="M9 76 L47 76 L29 46 L27 46 Z" fill="#C76D4A" opacity="0.85"/>
+              <rect style={{ animation: "streamFlow 2.4s ease-in-out infinite", transformOrigin: "center" }} x="27.3" y="40" width="1.4" height="3" fill="#C76D4A" opacity="0.9"/>
+            </svg>
           </div>
+          <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.1rem", color: colors.textSecondary, letterSpacing: "0.15em" }}>
+            正在描绘你的初心共鸣画像<span><span style={{ opacity: 0.3, animation: "dotPulse 1.4s ease-in-out infinite" }}>·</span><span style={{ opacity: 0.3, animation: "dotPulse 1.4s ease-in-out infinite 0.2s" }}>·</span><span style={{ opacity: 0.3, animation: "dotPulse 1.4s ease-in-out infinite 0.4s" }}>·</span></span>
+          </p>
+        </div>
+      )}
+
+      {/* 结果内容 */}
+      {showResult && (
+        <div>
+          {/* 顶部导航 */}
+          <header style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(251, 247, 241, 0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid #EAE0D5" }}>
+            <nav style={{ maxWidth: 1000, margin: "0 auto", padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Link href="/" style={{ fontFamily: "'Noto Serif SC', serif", fontWeight: 600, fontSize: "1.2rem", color: colors.textPrimary, textDecoration: "none", letterSpacing: "0.1em" }}>内在结构养育</Link>
+              <Link href="/" style={{ color: colors.textSecondary, textDecoration: "none", fontSize: "0.95rem" }}>联系我们</Link>
+            </nav>
+          </header>
+
+          {/* Hero */}
+          <section style={{ textAlign: "center", padding: "100px 32px 60px", background: "linear-gradient(180deg, #FBF7F1 0%, #F3ECE3 100%)" }}>
+            <div style={{ fontSize: "0.9rem", color: colors.accent, letterSpacing: "0.15em", marginBottom: 16 }}>育儿初心共鸣画像</div>
+            <h1 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(2rem, 4.5vw, 2.8rem)", fontWeight: 600, marginBottom: 16, letterSpacing: "0.08em", color: colors.textPrimary }}>初心无对错，只有共鸣与差异</h1>
+            <p style={{ fontSize: "clamp(0.95rem, 1.8vw, 1.1rem)", color: colors.textSecondary, maxWidth: 560, margin: "0 auto" }}>这份画像不是评判，而是一面镜子——让你看见自己内心的爱与力量，也温柔地照见它们与内在结构养育理念的共振与微妙错频。</p>
+          </section>
+
+          <div style={{ maxWidth: 1000, margin: "0 auto", padding: "80px 32px" }}>
+            {/* 01 共鸣度总览 */}
+            <section>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 16 }}>
+                <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: colors.accent, fontWeight: 600 }}>01</span>
+                <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(1.6rem, 3vw, 2rem)", fontWeight: 500, color: colors.textPrimary }}>共鸣度总览</h2>
+              </div>
+              <p style={{ fontSize: "1.05rem", color: colors.textSecondary, marginBottom: 40 }}>你的初心与理论倡导的同频光谱</p>
+
+              <div style={{ display: "flex", gap: 32, marginBottom: 80, flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 300, background: "#FFFCF7", border: "1px solid rgba(234, 224, 213, 0.5)", borderRadius: 24, padding: 36, boxShadow: "0 12px 40px rgba(62, 44, 44, 0.04)", textAlign: "center" }}>
+                  <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.3rem", color: colors.textPrimary, marginBottom: 8 }}>成全孩子</h3>
+                  <p style={{ fontSize: "0.9rem", color: colors.textSecondary, marginBottom: 24 }}>让他长成他自己</p>
+                  <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.6rem", fontWeight: 600, color: colors.accent, marginBottom: 6 }}>{answers.slice(0, 5).reduce((a, b) => a + b, 0) / 5 >= 4 ? "高度共鸣" : "局部共鸣"}</div>
+                  <p style={{ fontSize: "0.85rem", color: colors.textSecondary, marginBottom: 20 }}>{answers.slice(0, 5).reduce((a, b) => a + b, 0) / 5 >= 4 ? "同频共振 · 理念高度一致" : "部分同频 · 存在提升空间"}</p>
+                  <div style={{ position: "relative", height: 6, background: "#EAE0D5", borderRadius: 3, overflow: "hidden" }}>
+                    <div style={{ position: "absolute", top: 0, left: 0, height: "100%", background: "linear-gradient(90deg, #E89878, #C76D4A)", borderRadius: 3, width: `${Math.round((answers.slice(0, 5).reduce((a, b) => a + b, 0) / 5 / 5) * 97)}%`, transition: "width 1.2s ease-out 0.3s" }} />
+                  </div>
+                </div>
+                <div style={{ flex: 1, minWidth: 300, background: "#FFFCF7", border: "1px solid rgba(234, 224, 213, 0.5)", borderRadius: 24, padding: 36, boxShadow: "0 12px 40px rgba(62, 44, 44, 0.04)", textAlign: "center" }}>
+                  <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.3rem", color: colors.textPrimary, marginBottom: 8 }}>彼此滋养</h3>
+                  <p style={{ fontSize: "0.9rem", color: colors.textSecondary, marginBottom: 24 }}>两个独立的人彼此成就</p>
+                  <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.6rem", fontWeight: 600, color: colors.accent, marginBottom: 6 }}>{answers.slice(5).reduce((a, b) => a + b, 0) / 4 >= 4 ? "高度共鸣" : "局部共鸣"}</div>
+                  <p style={{ fontSize: "0.85rem", color: colors.textSecondary, marginBottom: 20 }}>{answers.slice(5).reduce((a, b) => a + b, 0) / 4 >= 4 ? "同频共振 · 理念高度一致" : "部分同频 · 存在微妙错频"}</p>
+                  <div style={{ position: "relative", height: 6, background: "#EAE0D5", borderRadius: 3, overflow: "hidden" }}>
+                    <div style={{ position: "absolute", top: 0, left: 0, height: "100%", background: "linear-gradient(90deg, #E89878, #C76D4A)", borderRadius: 3, width: `${Math.round((answers.slice(5).reduce((a, b) => a + b, 0) / 4 / 5) * 80)}%`, transition: "width 1.2s ease-out 0.3s" }} />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 02 初心明细 */}
+            <section style={{ marginTop: 80 }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 16 }}>
+                <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: colors.accent, fontWeight: 600 }}>02</span>
+                <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(1.6rem, 3vw, 2rem)", fontWeight: 500, color: colors.textPrimary }}>初心明细</h2>
+              </div>
+              <p style={{ fontSize: "1.05rem", color: colors.textSecondary, marginBottom: 40 }}>对照九大初心，看见你的自然倾向与理论倡导的同频与差异</p>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+                <div>
+                  <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", marginBottom: 8, color: colors.accent, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    成全孩子
+                    <span style={{ fontSize: "0.9rem", color: colors.textSecondary, fontFamily: "'Noto Sans SC', sans-serif", fontWeight: 400 }}>共鸣度：{answers.slice(0, 5).reduce((a, b) => a + b, 0) / 5 >= 4 ? "高度同频" : "部分同频"}</span>
+                  </h3>
+                  <p style={{ fontSize: "1.1rem", color: colors.textPrimary, marginBottom: 32, fontWeight: 500 }}>让他长成他自己</p>
+                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 24 }}>
+                    {questions.slice(0, 5).map((q, i) => (
+                      <li key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                        <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.2rem", color: colors.accent, fontWeight: 600, minWidth: 24 }}>{i + 1}</span>
+                        <div>
+                          <strong style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "1.05rem", color: colors.textPrimary, marginBottom: 6 }}>
+                            {q.text}
+                            <span style={{ fontFamily: "'Noto Sans SC', sans-serif", fontSize: "0.75rem", fontWeight: 400, padding: "2px 8px", borderRadius: 12, background: answers[i] >= 4 ? "rgba(199, 109, 74, 0.1)" : "rgba(128, 110, 102, 0.1)", color: answers[i] >= 4 ? colors.accent : colors.textSecondary }}>
+                              {answers[i] >= 4 ? "理念共振" : "视角差异"}
+                            </span>
+                          </strong>
+                          <span style={{ fontSize: "0.85rem", color: colors.textSecondary }}>你的选择：{answers[i]} / 5</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", marginBottom: 8, color: colors.accent, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    彼此滋养
+                    <span style={{ fontSize: "0.9rem", color: colors.textSecondary, fontFamily: "'Noto Sans SC', sans-serif", fontWeight: 400 }}>共鸣度：{answers.slice(5).reduce((a, b) => a + b, 0) / 4 >= 4 ? "高度同频" : "部分同频"}</span>
+                  </h3>
+                  <p style={{ fontSize: "1.1rem", color: colors.textPrimary, marginBottom: 32, fontWeight: 500 }}>两个独立的人，彼此成就</p>
+                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 24 }}>
+                    {questions.slice(5).map((q, i) => (
+                      <li key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                        <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.2rem", color: colors.accent, fontWeight: 600, minWidth: 24 }}>·</span>
+                        <div>
+                          <strong style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "1.05rem", color: colors.textPrimary, marginBottom: 6 }}>
+                            {q.text}
+                            <span style={{ fontFamily: "'Noto Sans SC', sans-serif", fontSize: "0.75rem", fontWeight: 400, padding: "2px 8px", borderRadius: 12, background: answers[i + 5] >= 4 ? "rgba(199, 109, 74, 0.1)" : "rgba(128, 110, 102, 0.1)", color: answers[i + 5] >= 4 ? colors.accent : colors.textSecondary }}>
+                              {answers[i + 5] >= 4 ? "理念共振" : "视角差异"}
+                            </span>
+                          </strong>
+                          <span style={{ fontSize: "0.85rem", color: colors.textSecondary }}>你的选择：{answers[i + 5]} / 5</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* 03 深度解读 */}
+          <section style={{ background: "#F3ECE3", padding: "80px 32px", margin: "80px 0" }}>
+            <div style={{ maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 48, justifyContent: "center" }}>
+                <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: colors.accent, fontWeight: 600 }}>03</span>
+                <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(1.6rem, 3vw, 2rem)", fontWeight: 500, color: colors.textPrimary }}>深度解读</h2>
+              </div>
+
+              {loadingInsight ? (
+                <p style={{ fontSize: "1.05rem", lineHeight: 2.1, color: colors.textSecondary }}>解读生成中...</p>
+              ) : aiInsight ? (
+                <p style={{ fontSize: "1.05rem", lineHeight: 2.1, color: colors.textPrimary, textAlign: "left", marginBottom: 24 }}>{aiInsight}</p>
+              ) : null}
+
+              <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(1.2rem, 2vw, 1.4rem)", color: colors.accent, lineHeight: 1.7, margin: "32px 0", padding: "20px 0", borderTop: "1px dashed #EAE0D5", borderBottom: "1px dashed #EAE0D5" }}>
+                差异维度并非缺陷，<br />而是提示你：对孩子的全然信任之下，<br />也需要留出一丝空间，去&quot;看见&quot;<br />他行为背后的那个&quot;人&quot;。
+              </div>
+
+              <p style={{ fontSize: "1.05rem", lineHeight: 2.1, color: colors.textPrimary, textAlign: "left", marginBottom: 24 }}>
+                在<span style={{ color: colors.accent, fontWeight: 500 }}>「内在结构养育」</span>体系中，我们会帮你把这份高度同频的初心，转化为<span style={{ fontFamily: "'Noto Serif SC', serif", fontWeight: 500 }}>&quot;如何在冲突中保持连接、在看见中完成引导&quot;</span>的具体结构。
+              </p>
+
+              <p style={{ fontSize: "1.05rem", lineHeight: 2.1, color: colors.textPrimary, textAlign: "left" }}>
+                你已在正确的路上，我们只是帮你把路<span style={{ color: colors.accent, fontWeight: 500 }}>走得更宽，更细</span>。
+              </p>
+            </div>
+          </section>
+
+          <div style={{ maxWidth: 1000, margin: "0 auto", padding: "0 32px 80px" }}>
+            {/* 04 落地工具 */}
+            <section>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 48 }}>
+                <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: colors.accent, fontWeight: 600 }}>04</span>
+                <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(1.6rem, 3vw, 2rem)", fontWeight: 500, color: colors.textPrimary }}>落地工具</h2>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
+                <div style={{ background: "#FFFCF7", padding: "48px 36px", borderRadius: 24, boxShadow: "0 12px 40px rgba(62, 44, 44, 0.04)", border: "1px solid rgba(234, 224, 213, 0.4)" }}>
+                  <div style={{ fontSize: "2.5rem", marginBottom: 24 }}>🌱</div>
+                  <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.5rem", marginBottom: 8, color: colors.textPrimary }}>望杏成林</h4>
+                  <p style={{ color: colors.accent, fontSize: "0.9rem", marginBottom: 24 }}>日常陪伴与滋养</p>
+                  <p style={{ color: colors.textSecondary, lineHeight: 1.9, fontSize: "0.95rem" }}>亲子互动记录 · 情绪命名<br />习惯养成 · 成长瞬间捕捉</p>
+                </div>
+                <div style={{ background: "#FFFCF7", padding: "48px 36px", borderRadius: 24, boxShadow: "0 12px 40px rgba(62, 44, 44, 0.04)", border: "1px solid rgba(234, 224, 213, 0.4)" }}>
+                  <div style={{ fontSize: "2.5rem", marginBottom: 24 }}>📊</div>
+                  <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.5rem", marginBottom: 8, color: colors.textPrimary }}>荔枝测评</h4>
+                  <p style={{ color: colors.accent, fontSize: "0.9rem", marginBottom: 24 }}>阶段性评估</p>
+                  <p style={{ color: colors.textSecondary, lineHeight: 1.9, fontSize: "0.95rem" }}>十大心神能力发展水平<br />定位阶段 · 养育建议</p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* 底部收尾 */}
+          <footer style={{ background: "#F3ECE3", padding: "80px 32px 60px", textAlign: "center" }}>
+            <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(1.4rem, 2.5vw, 1.8rem)", lineHeight: 1.6, color: colors.textPrimary, marginBottom: 16 }}>你对待孩子的方式<br />就是孩子内心世界的建筑图纸</p>
+            <p style={{ color: colors.textSecondary, marginBottom: 16 }}>用结构思维理解孩子，用发展眼光看见成长</p>
+            <p style={{ color: colors.textSecondary, marginBottom: 48 }}>从理解开始，真正成全</p>
+            <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.2rem", fontWeight: 600, marginBottom: 8, color: colors.textPrimary }}>内在结构养育</p>
+            <p style={{ fontSize: "0.9rem", color: colors.textSecondary }}>理论与实践的完整育儿体系</p>
+          </footer>
+
+          {/* 注册 + 分享 */}
+          <section style={{ padding: "48px 32px", background: "#FBF7F1" }}>
+            <div style={{ maxWidth: 500, margin: "0 auto", display: "flex", flexDirection: "column", gap: 12 }}>
+              <button style={{ display: "block", padding: "16px 32px", backgroundColor: "#f59e0b", color: "#fff", fontWeight: 500, borderRadius: 9999, textAlign: "center", border: "none", cursor: "pointer", fontSize: "1rem" }}>注册 / 登录</button>
+              <button style={{ display: "block", padding: "16px 32px", border: "1px solid rgba(245,158,11,0.3)", color: "rgba(120,53,15,0.7)", fontWeight: 500, borderRadius: 9999, textAlign: "center", background: "transparent", cursor: "pointer", fontSize: "1rem" }}>生成分享海报</button>
+            </div>
+          </section>
         </div>
       )}
 

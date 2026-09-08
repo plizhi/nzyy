@@ -1,9 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* 颜色系统 - 专业暖色调 */
+  /* 颜色系统 - 参考设计 */
+  --bg-color: #FBF7F1;
+  --text-primary: #3E2C2C;
+  --text-secondary: #806E66;
+  --accent-color: #C76D4A;
+  --card-bg: #FFFCF7;
+  --bg-soft: #F3ECE3;
+  --divider: #EAE0D5;
+  --radius-l: 24px;
+  --radius-m: 16px;
+  --shadow-soft: 0 12px 40px rgba(62, 44, 44, 0.04);
+
+  /* 兼容旧变量 */
   --primary: #d97706;
   --primary-light: #f59e0b;
   --primary-pale: #fef3c7;
@@ -51,13 +65,13 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-  background-color: var(--background);
-  color: var(--foreground);
+  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.7;
-  font-size: 16px;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
 }
 
 /* 文字层级 */
@@ -84,22 +98,23 @@ h3 {
 p {
   font-size: 1rem;
   line-height: 1.75;
-  color: var(--foreground-light);
+  color: var(--text-secondary);
 }
 
 /* 容器 */
 .container {
   width: 100%;
-  max-width: 42rem;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 32px;
 }
 
 /* 卡片 */
 .card {
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: var(--radius-m);
+  border: 1px solid rgba(234, 224, 213, 0.5);
+  box-shadow: var(--shadow-soft);
   padding: var(--space-xl);
   transition: all 0.2s ease;
 }
@@ -218,9 +233,9 @@ p {
 
 /* 折叠面板 */
 details {
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: var(--radius-m);
+  border: 1px solid rgba(234, 224, 213, 0.5);
   overflow: hidden;
 }
 
@@ -232,7 +247,7 @@ details > summary {
   justify-content: space-between;
   align-items: center;
   font-weight: 500;
-  color: var(--foreground);
+  color: var(--text-primary);
   gap: 1rem;
 }
 
@@ -247,7 +262,7 @@ details > summary::-webkit-details-marker {
 }
 
 details[open] > summary {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(234, 224, 213, 0.5);
 }
 
 details-content {
@@ -259,15 +274,16 @@ details-content {
   font-size: 5rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: var(--foreground);
+  color: var(--text-primary);
   line-height: 1;
 }
 
 /* 工具卡片 */
 .tool-card {
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: var(--radius-l);
+  border: 1px solid rgba(234, 224, 213, 0.4);
+  box-shadow: var(--shadow-soft);
   padding: var(--space-xl);
   transition: all 0.2s ease;
 }
@@ -280,20 +296,20 @@ details-content {
 .tool-card-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--text-primary);
   margin-bottom: var(--space-xs);
 }
 
 .tool-card-desc {
   font-size: 0.875rem;
-  color: var(--foreground-lighter);
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 /* 即将推出卡片 */
 .coming-soon-card {
   background: transparent;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-m);
   border: 1px dashed var(--border);
   padding: var(--space-lg);
   text-align: center;
@@ -302,23 +318,23 @@ details-content {
 /* 导航项 */
 .nav-link {
   font-size: 0.875rem;
-  color: var(--foreground-light);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .nav-link:hover {
-  color: var(--primary-light);
+  color: var(--accent-color);
 }
 
 .nav-link-active {
-  color: var(--primary-light);
+  color: var(--accent-color);
   font-weight: 500;
 }
 
 /* 页脚 */
 .footer {
-  background: rgba(120, 53, 15, 0.03);
+  background: var(--bg-soft);
   padding: var(--space-3xl) 0;
   margin-top: var(--space-3xl);
 }
@@ -340,7 +356,11 @@ details-content {
 }
 
 /* 响应式 */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .container {
+    padding: 0 24px;
+  }
+
   h1 {
     font-size: 1.75rem;
   }
@@ -349,11 +369,50 @@ details-content {
     font-size: 1.25rem;
   }
 
-  .container {
-    padding: 0 var(--space-md);
-  }
-
   .score-display {
     font-size: 4rem;
   }
+}
+
+/* 结果页沙漏动画 */
+@keyframes gentleSway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+@keyframes drainTop { 0% { transform: scaleY(1); opacity: 0.85; } 70% { transform: scaleY(0.15); opacity: 0.85; } 71% { transform: scaleY(1); opacity: 0; } 100% { transform: scaleY(1); opacity: 0.85; } }
+@keyframes fillBottom { 0% { transform: scaleY(0.05); opacity: 0.85; } 70% { transform: scaleY(1); opacity: 0.85; } 71% { transform: scaleY(0.05); opacity: 0; } 100% { transform: scaleY(0.05); opacity: 0.85; } }
+@keyframes streamFlow { 0%, 70% { opacity: 0.9; transform: scaleY(1); } 71%, 100% { opacity: 0; transform: scaleY(0.3); } }
+@keyframes dotPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; color: #C76D4A; } }
+
+/* 页面动画 */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes expandHeight {
+  from {
+    height: 0;
+  }
+  to {
+    height: 40px;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .resonance-overview { flex-direction: column; }
+  .grid-2 { grid-template-columns: 1fr; gap: 40px; }
+  .tools-grid { grid-template-columns: 1fr; }
 }
