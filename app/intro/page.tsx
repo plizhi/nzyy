@@ -16,9 +16,7 @@ export default function IntroPage() {
       <section style={{ textAlign: 'center', padding: '120px 32px 80px', background: 'linear-gradient(180deg, var(--bg-color) 0%, var(--bg-soft) 100%)' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <h1 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', fontWeight: 600, marginBottom: 24, letterSpacing: '0.1em' }}>内在结构养育</h1>
-          <p style={{ fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: 'var(--text-secondary)', marginBottom: 48 }}>一套动静兼顾的心灵建造体系</p>
-          <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', color: 'var(--accent-color)', fontWeight: 500, lineHeight: 1.6, marginBottom: 32 }}>用结构思维理解孩子，用发展眼光看见成长</p>
-          <p style={{ fontFamily: "'Noto Serif SC', serif", color: 'var(--text-secondary)', marginTop: 32 }}>你对待孩子的方式，就是孩子内心世界的建筑图纸</p>
+          <p style={{ fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: 'var(--text-secondary)' }}>一套动静兼顾的心灵建造体系</p>
         </div>
       </section>
 
