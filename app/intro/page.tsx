@@ -174,18 +174,66 @@ export default function IntroPage() {
             <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }}>05</span>
             <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.6rem, 3vw, 2rem)', fontWeight: 500, color: 'var(--text-primary)' }}>落地工具</h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, marginTop: 48 }}>
-            <div style={{ background: 'var(--card-bg)', padding: '48px 36px', borderRadius: 'var(--radius-l)', boxShadow: 'var(--shadow-soft)', display: 'flex', flexDirection: 'column', border: '1px solid rgba(234, 224, 213, 0.4)' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: 24 }}>🌱</div>
-              <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.5rem', marginBottom: 8, color: 'var(--text-primary)' }}>望杏成林</h4>
-              <p style={{ color: 'var(--accent-color)', fontSize: '0.9rem', marginBottom: 24 }}>日常陪伴与滋养</p>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.9, fontSize: '0.95rem' }}>亲子互动记录 · 情绪命名<br />习惯养成 · 成长瞬间捕捉</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24, marginTop: 48 }}>
+            {/* 望杏成林 */}
+            <div style={{ background: 'var(--card-bg)', padding: '36px 28px', borderRadius: 'var(--radius-l)', boxShadow: 'var(--shadow-soft)', border: '1px solid rgba(234, 224, 213, 0.4)', transition: 'transform 0.3s ease, box-shadow 0.3s ease', cursor: 'pointer' }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(62, 44, 44, 0.08)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}>
+              <div style={{ fontSize: '2rem', marginBottom: 20 }}>🌱</div>
+              <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.3rem', marginBottom: 6, color: 'var(--text-primary)' }}>望杏成林</h4>
+              <p style={{ color: 'var(--accent-color)', fontSize: '0.85rem', marginBottom: 16 }}>日常陪伴与滋养</p>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '0.9rem' }}>亲子互动记录 · 情绪命名<br />习惯养成 · 成长瞬间捕捉</p>
             </div>
-            <div style={{ background: 'var(--card-bg)', padding: '48px 36px', borderRadius: 'var(--radius-l)', boxShadow: 'var(--shadow-soft)', display: 'flex', flexDirection: 'column', border: '1px solid rgba(234, 224, 213, 0.4)' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: 24 }}>📊</div>
-              <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.5rem', marginBottom: 8, color: 'var(--text-primary)' }}>荔枝测评</h4>
-              <p style={{ color: 'var(--accent-color)', fontSize: '0.9rem', marginBottom: 24 }}>阶段性评估</p>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.9, fontSize: '0.95rem' }}>十大心神能力发展水平<br />定位阶段 · 养育建议</p>
+            {/* 荔枝测评 */}
+            <div style={{ background: 'var(--card-bg)', padding: '36px 28px', borderRadius: 'var(--radius-l)', boxShadow: 'var(--shadow-soft)', border: '1px solid rgba(234, 224, 213, 0.4)' }}>
+              <div style={{ fontSize: '2rem', marginBottom: 20 }}>📊</div>
+              <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.3rem', marginBottom: 6, color: 'var(--text-primary)' }}>荔枝测评</h4>
+              <p style={{ color: 'var(--accent-color)', fontSize: '0.85rem', marginBottom: 16 }}>阶段性评估</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(199, 109, 74, 0.06)', borderRadius: 10 }}>
+                  <div>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--text-primary)' }}>荔学卷</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-color)', marginLeft: 8 }}>K12学习力测评</span>
+                  </div>
+                  <span style={{ fontSize: '0.7rem', padding: '2px 8px', background: 'rgba(62, 44, 44, 0.06)', borderRadius: 4, color: 'var(--text-secondary)' }}>可使用</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(128, 110, 102, 0.04)', borderRadius: 10, opacity: 0.8 }}>
+                  <div>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--text-primary)' }}>荔心卷</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: 8 }}>十大心神能力发展</span>
+                  </div>
+                  <span style={{ fontSize: '0.7rem', padding: '2px 8px', background: 'rgba(128, 110, 102, 0.1)', borderRadius: 4, color: 'var(--text-secondary)' }}>预告</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(128, 110, 102, 0.04)', borderRadius: 10, opacity: 0.8 }}>
+                  <div>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--text-primary)' }}>荔升卷</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: 8 }}>升学潜力指数</span>
+                  </div>
+                  <span style={{ fontSize: '0.7rem', padding: '2px 8px', background: 'rgba(128, 110, 102, 0.1)', borderRadius: 4, color: 'var(--text-secondary)' }}>预告</span>
+                </div>
+              </div>
+            </div>
+            {/* 咨询服务 */}
+            <div style={{ background: 'var(--card-bg)', padding: '36px 28px', borderRadius: 'var(--radius-l)', boxShadow: 'var(--shadow-soft)', border: '1px solid rgba(234, 224, 213, 0.4)', transition: 'transform 0.3s ease, box-shadow 0.3s ease', cursor: 'pointer' }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(62, 44, 44, 0.08)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}>
+              <div style={{ fontSize: '2rem', marginBottom: 20 }}>💬</div>
+              <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.3rem', marginBottom: 6, color: 'var(--text-primary)' }}>咨询服务</h4>
+              <p style={{ color: 'var(--accent-color)', fontSize: '0.85rem', marginBottom: 16 }}>深度人工服务</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>危机干预包</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-primary)' }}>1999元/次</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>矫正计划</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-primary)' }}>9999元/年</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>标准陪跑</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-primary)' }}>39800元/年</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
