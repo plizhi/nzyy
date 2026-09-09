@@ -548,3 +548,13 @@ details-content {
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
 }
+
+/* 落地工具页面 - 背景慢呼吸光晕 */
+@keyframes breathe {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+  50% { transform: translateX(-50%) scale(1.15); opacity: 1; }
+}
+
+.animate-breathe {
+  animation: breathe 9s ease-in-out infinite;
+}
