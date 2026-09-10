@@ -48,20 +48,23 @@ export default function StoryPage() {
         .cta-btn {
             display: block;
             text-align: center;
-            background: #3E2C2C;
+            background: #C76D4A;
             color: #FFFCF7;
             padding: 16px 0;
-            border-radius: 12px;
+            border-radius: 50px;
             text-decoration: none;
             font-family: 'Noto Serif SC', serif;
             font-size: 1.1rem;
             font-weight: 600;
             margin-top: 16px;
             transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 8px 30px rgba(199, 109, 74, 0.15);
         }
-        .cta-btn:hover { background: #C76D4A; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(62, 44, 44, 0.15); }
+        .cta-btn:hover { background: #B85F3E; transform: translateY(-3px); box-shadow: 0 12px 36px rgba(199, 109, 74, 0.25); }
         .cta-btn.secondary { background: #FFFCF7; color: #3E2C2C; border: 1px solid #EAE0D5; }
-        .cta-btn.secondary:hover { border-color: #C76D4A; color: #C76D4A; }
+        .cta-btn.secondary:hover { border-color: #C76D4A; color: #C76D4A; background: #FFFCF7; }
         @media (max-width: 768px) {
             .chapter-num { font-size: 3.5rem; }
             p { font-size: 1rem; }
