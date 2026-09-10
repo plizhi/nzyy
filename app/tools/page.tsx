@@ -398,9 +398,43 @@ export default function ToolsPage() {
           </a>
         </div>
 
+        {/* 服务方案引导 */}
+        <Link
+          href="/pricing"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            background: "linear-gradient(135deg, #FFFCF7 0%, #FFF8F1 100%)",
+            border: "2px solid #C76D4A",
+            borderRadius: 20,
+            padding: "24px 32px",
+            textDecoration: "none",
+            transition: "all 0.3s ease",
+            marginBottom: 40,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-3px)";
+            e.currentTarget.style.boxShadow = "0 12px 40px rgba(199, 109, 74, 0.15)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
+          <div>
+            <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.1rem", color: "#3E2C2C", fontWeight: 600, marginBottom: 4 }}>阶梯式成长支持体系</div>
+            <div style={{ fontSize: "0.85rem", color: "#806E66" }}>从199元入门到199998元顶配，找到适合您的方案</div>
+          </div>
+          <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1rem", color: "#C76D4A", display: "flex", alignItems: "center", gap: 8 }}>
+            了解更多
+            <span style={{ fontSize: "1.2rem" }}>→</span>
+          </div>
+        </Link>
+
         {/* 底部导航 */}
         <div style={{
-          marginTop: 120,
+          marginTop: 40,
           paddingTop: 40,
           borderTop: "1px solid #EAE0D5",
           display: "flex",

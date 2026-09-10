@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { getIntentData, saveIntentData } from "@/lib/storage";
 
 type Step = "intro" | "test" | "result";
 
@@ -73,11 +74,25 @@ export default function HomePage() {
   const [aiInsight, setAiInsight] = useState("");
   const [loadingInsight, setLoadingInsight] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [showPosterModal, setShowPosterModal] = useState(false);
+  const [posterImageUrl, setPosterImageUrl] = useState("");
+  const [posterDataUrl, setPosterDataUrl] = useState("");
+  const [isGeneratingPoster, setIsGeneratingPoster] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
 
   const totalQuestions = questions.length;
 
   useEffect(() => {
     setMounted(true);
+
+    // 检查是否已测试过，直接显示结果
+    const savedData = getIntentData();
+    if (savedData.answers && savedData.answers.length === 9) {
+      setAnswers(savedData.answers);
+      setScore(savedData.共鸣度 || 0);
+      setStep("result");
+      setShowResult(true);
+    }
   }, []);
 
   // 沙漏等待后显示结果
@@ -89,6 +104,18 @@ export default function HomePage() {
       return () => clearTimeout(timer);
     }
   }, [step, showResult]);
+
+  // 预加载二维码图片
+  useEffect(() => {
+    if (showResult) {
+      const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent("https://nzyy.cc")}`;
+      setQrCodeUrl(url);
+      // 预加载
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = url;
+    }
+  }, [showResult]);
 
   useEffect(() => {
     if (step !== "result" || answers.length < 9) return;
@@ -133,6 +160,168 @@ export default function HomePage() {
       const finalScore = Math.round((dim1Avg * 0.6 + dim2Avg * 0.4) * 20);
       setScore(finalScore);
       setStep("result");
+      // 保存到 localStorage，下次打开直接显示结果
+      saveIntentData({ answers: newAnswers, 共鸣度: finalScore });
+    }
+  }
+
+  // 计算共鸣状态
+  const dim1Avg = answers.slice(0, 5).reduce((a, b) => a + b, 0) / 5;
+  const dim2Avg = answers.slice(5).reduce((a, b) => a + b, 0) / 4;
+  const dim1Status = dim1Avg >= 4 ? "高度共鸣" : "局部共鸣";
+  const dim2Status = dim2Avg >= 4 ? "高度共鸣" : "局部共鸣";
+
+  // 生成海报（纯 Canvas 绘制）
+  async function generatePoster() {
+    setIsGeneratingPoster(true);
+
+    // 先确保二维码图片加载完成
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent("https://nzyy.cc")}`;
+    const qrImg = new Image();
+    qrImg.crossOrigin = "anonymous";
+    qrImg.src = qrUrl;
+    await new Promise((resolve) => {
+      qrImg.onload = resolve;
+      qrImg.onerror = resolve; // 失败也继续
+    });
+
+    // 等待字体加载完毕
+    await document.fonts.ready;
+
+    try {
+      // 创建 Canvas 画布 (750x1334，1倍图)
+      const canvas = document.createElement("canvas");
+      canvas.width = 750;
+      canvas.height = 1334;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("无法获取 Canvas 上下文");
+
+      // 绘制背景渐变
+      const gradient = ctx.createLinearGradient(0, 0, 0, 1334);
+      gradient.addColorStop(0, "#FBF7F1");
+      gradient.addColorStop(1, "#F3ECE3");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 750, 1334);
+
+      ctx.textAlign = "center";
+
+      // 头部 - 品牌名
+      ctx.font = '500 24px "Noto Sans SC", sans-serif';
+      ctx.fillStyle = "#806E66";
+      ctx.fillText("@内在结构养育", 375, 110);
+
+      // 头部 - 标题
+      ctx.font = '600 32px "Noto Serif SC", serif';
+      ctx.fillStyle = "#C76D4A";
+      ctx.fillText("育儿初心共鸣画像", 375, 155);
+
+      // 核心金句区
+      ctx.font = '400 20px "Noto Sans SC", sans-serif';
+      ctx.fillStyle = "#806E66";
+      ctx.fillText("致 一直在正确路上的你", 375, 380);
+
+      ctx.font = '600 64px "Noto Serif SC", serif';
+      ctx.fillStyle = "#3E2C2C";
+      ctx.fillText("初心无对错", 375, 490);
+
+      // "只有【共鸣】与差异" 居中混色
+      const text1 = "只有";
+      const text2 = "【共鸣】";
+      const text3 = "与差异";
+      const w1 = ctx.measureText(text1).width;
+      const w2 = ctx.measureText(text2).width;
+      const w3 = ctx.measureText(text3).width;
+      const totalWidth = w1 + w2 + w3;
+      let x = 375 - totalWidth / 2;
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#3E2C2C";
+      ctx.fillText(text1, x, 580);
+      x += w1;
+      ctx.fillStyle = "#C76D4A";
+      ctx.fillText(text2, x, 580);
+      x += w2;
+      ctx.fillStyle = "#3E2C2C";
+      ctx.fillText(text3, x, 580);
+
+      // 虚线引言框
+      ctx.strokeStyle = "#EAE0D5";
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(80, 660);
+      ctx.lineTo(670, 660);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(80, 820);
+      ctx.lineTo(670, 820);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 引言
+      ctx.fillStyle = "#806E66";
+      ctx.font = '500 26px "Noto Serif SC", serif';
+      ctx.fillText('"你对待孩子的方式，', 375, 720);
+      ctx.fillText('就是孩子内心世界的建筑图纸。"', 375, 765);
+
+      // 底部维度数据
+      ctx.fillStyle = "#3E2C2C";
+      ctx.font = '500 28px "Noto Serif SC", serif';
+      ctx.fillText("成全孩子", 220, 1020);
+      ctx.fillText("彼此滋养", 530, 1020);
+
+      ctx.fillStyle = "#C76D4A";
+      ctx.font = '400 20px "Noto Sans SC", sans-serif';
+      ctx.fillText(dim1Status, 220, 1055);
+      ctx.fillText(dim2Status, 530, 1055);
+
+      // 底部分割线与落款
+      ctx.strokeStyle = "#EAE0D5";
+      ctx.beginPath();
+      ctx.moveTo(80, 1150);
+      ctx.lineTo(670, 1150);
+      ctx.stroke();
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#806E66";
+      ctx.font = '400 18px "Noto Sans SC", sans-serif';
+      ctx.fillText("用结构思维理解孩子", 80, 1200);
+      ctx.fillText("用发展眼光看见成长", 80, 1230);
+
+      // 右下角真实二维码
+      try {
+        ctx.drawImage(qrImg, 570, 1170, 100, 100);
+      } catch {
+        // 如果二维码加载失败，绘制占位框
+        ctx.strokeStyle = "#EAE0D5";
+        ctx.strokeRect(570, 1170, 100, 100);
+        ctx.fillStyle = "#999";
+        ctx.textAlign = "center";
+        ctx.font = '400 12px "Noto Sans SC", sans-serif';
+        ctx.fillText("扫码查看", 620, 1210);
+        ctx.fillText("完整解读", 620, 1230);
+      }
+
+      // 生成 dataURL
+      const dataURL = canvas.toDataURL("image/jpeg", 0.85);
+      setPosterImageUrl(dataURL);
+      setPosterDataUrl(dataURL);
+      setShowPosterModal(true);
+    } catch (err) {
+      console.error("海报生成失败:", err);
+      alert("海报生成失败，请重试");
+    } finally {
+      setIsGeneratingPoster(false);
+    }
+  }
+
+  // 在新标签页打开海报
+  function openPosterInNewTab() {
+    if (posterDataUrl) {
+      const newTab = window.open("about:blank");
+      if (newTab) {
+        newTab.document.write(`<img src="${posterDataUrl}" style="width:100%;height:auto;">`);
+        newTab.document.close();
+      }
     }
   }
 
@@ -533,7 +722,7 @@ export default function HomePage() {
               </div>
               <p style={{ fontSize: "1.05rem", color: colors.textSecondary, marginBottom: 40 }}>对照九大初心，看见你的自然倾向与理论倡导的同频与差异</p>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))", gap: 48 }}>
                 <div>
                   <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", marginBottom: 8, color: colors.accent, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     成全孩子
@@ -566,7 +755,7 @@ export default function HomePage() {
                   <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 24 }}>
                     {questions.slice(5).map((q, i) => (
                       <li key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-                        <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.2rem", color: colors.accent, fontWeight: 600, minWidth: 24 }}>·</span>
+                        <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.2rem", color: colors.accent, fontWeight: 600, minWidth: 24 }}>{i + 6}</span>
                         <div>
                           <strong style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "1.05rem", color: colors.textPrimary, marginBottom: 6 }}>
                             {q.text}
@@ -599,15 +788,15 @@ export default function HomePage() {
               ) : null}
 
               <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(1.2rem, 2vw, 1.4rem)", color: colors.accent, lineHeight: 1.7, margin: "32px 0", padding: "20px 0", borderTop: "1px dashed #EAE0D5", borderBottom: "1px dashed #EAE0D5" }}>
-                差异维度并非缺陷，<br />而是提示你：对孩子的全然信任之下，<br />也需要留出一丝空间，去&quot;看见&quot;<br />他行为背后的那个&quot;人&quot;。
+                差异维度并非缺陷，<br />而是提示你：对孩子的全然信任之下，<br />也需要保持开放，去&quot;看见&quot;<br />他行为背后的那个&quot;人&quot;。
               </div>
 
               <p style={{ fontSize: "1.05rem", lineHeight: 2.1, color: colors.textPrimary, textAlign: "left", marginBottom: 24 }}>
-                在<span style={{ color: colors.accent, fontWeight: 500 }}>「内在结构养育」</span>体系中，我们会帮你把这份高度同频的初心，转化为<span style={{ fontFamily: "'Noto Serif SC', serif", fontWeight: 500 }}>&quot;如何在冲突中保持连接、在看见中完成引导&quot;</span>的具体结构。
+                在<span style={{ color: colors.accent, fontWeight: 500 }}>「内在结构养育」</span>体系中，我们会帮你把这份高度同频的初心，转化为<span style={{ fontFamily: "'Noto Serif SC', serif", fontWeight: 500 }}>&quot;在冲突中保持连接、在看见中给予引导&quot;</span>的具体方法。
               </p>
 
               <p style={{ fontSize: "1.05rem", lineHeight: 2.1, color: colors.textPrimary, textAlign: "left" }}>
-                你已在正确的路上，我们只是帮你把路<span style={{ color: colors.accent, fontWeight: 500 }}>走得更宽，更细</span>。
+                你已在正确的路上，我们陪你走得更<span style={{ color: colors.accent, fontWeight: 500 }}>笃定、更深入</span>。
               </p>
             </div>
           </section>
@@ -659,9 +848,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 {/* 咨询服务 */}
-                <div style={{ background: "#FFFCF7", padding: "36px 28px", borderRadius: 20, boxShadow: "0 8px 32px rgba(62, 44, 44, 0.04)", border: "1px solid rgba(234, 224, 213, 0.4)", transition: "transform 0.3s ease, box-shadow 0.3s ease", cursor: "pointer" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 16px 48px rgba(62, 44, 44, 0.08)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(62, 44, 44, 0.04)"; }}>
+                <a href="/consult" style={{ background: "#FFFCF7", padding: "36px 28px", borderRadius: 20, boxShadow: "0 8px 32px rgba(62, 44, 44, 0.04)", border: "1px solid rgba(234, 224, 213, 0.4)", transition: "transform 0.3s ease, box-shadow 0.3s ease", cursor: "pointer", textDecoration: "none", display: "block" }}>
                   <div style={{ fontSize: "2rem", marginBottom: 20 }}>💬</div>
                   <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.3rem", marginBottom: 6, color: colors.textPrimary }}>咨询服务</h4>
                   <p style={{ color: colors.accent, fontSize: "0.85rem", marginBottom: 16 }}>深度人工服务</p>
@@ -679,16 +866,51 @@ export default function HomePage() {
                       <span style={{ fontSize: "0.8rem", fontWeight: 500, color: colors.textPrimary }}>39800元/年</span>
                     </div>
                   </div>
-                </div>
+                </a>
               </div>
             </section>
           </div>
+
+          {/* 服务方案引导 */}
+          <section style={{ maxWidth: 1000, margin: "0 auto", padding: "0 32px" }}>
+            <Link
+              href="/pricing"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                background: "linear-gradient(135deg, #FFFCF7 0%, #FFF8F1 100%)",
+                border: "2px solid #C76D4A",
+                borderRadius: 20,
+                padding: "28px 36px",
+                textDecoration: "none",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = "0 12px 40px rgba(199, 109, 74, 0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              <div>
+                <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.2rem", color: "#3E2C2C", fontWeight: 600, marginBottom: 4 }}>阶梯式成长支持体系</div>
+                <div style={{ fontSize: "0.9rem", color: "#806E66" }}>从199元入门到199998元顶配，找到适合您的方案</div>
+              </div>
+              <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1rem", color: "#C76D4A", display: "flex", alignItems: "center", gap: 8 }}>
+                了解更多
+                <span style={{ fontSize: "1.2rem" }}>→</span>
+              </div>
+            </Link>
+          </section>
 
           {/* 底部收尾 */}
           <footer style={{ background: "#F3ECE3", padding: "80px 32px 60px", textAlign: "center" }}>
             <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "clamp(1.4rem, 2.5vw, 1.8rem)", lineHeight: 1.6, color: colors.textPrimary, marginBottom: 16 }}>你对待孩子的方式<br />就是孩子内心世界的建筑图纸</p>
             <p style={{ color: colors.textSecondary, marginBottom: 16 }}>用结构思维理解孩子，用发展眼光看见成长</p>
-            <p style={{ color: colors.textSecondary, marginBottom: 48 }}>从理解开始，真正成全</p>
+            <p style={{ color: colors.textSecondary, marginBottom: 48 }}>从理解开始，一步步成全</p>
             <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.2rem", fontWeight: 600, marginBottom: 8, color: colors.textPrimary }}>内在结构养育</p>
             <p style={{ fontSize: "0.9rem", color: colors.textSecondary }}>理论与实践的完整育儿体系</p>
           </footer>
@@ -697,9 +919,68 @@ export default function HomePage() {
           <section style={{ padding: "48px 32px", background: "#FBF7F1" }}>
             <div style={{ maxWidth: 500, margin: "0 auto", display: "flex", flexDirection: "column", gap: 12 }}>
               <button style={{ display: "block", padding: "16px 32px", backgroundColor: "#f59e0b", color: "#fff", fontWeight: 500, borderRadius: 9999, textAlign: "center", border: "none", cursor: "pointer", fontSize: "1rem" }}>注册 / 登录</button>
-              <button style={{ display: "block", padding: "16px 32px", border: "1px solid rgba(245,158,11,0.3)", color: "rgba(120,53,15,0.7)", fontWeight: 500, borderRadius: 9999, textAlign: "center", background: "transparent", cursor: "pointer", fontSize: "1rem" }}>生成分享海报</button>
+              <button
+                onClick={generatePoster}
+                disabled={isGeneratingPoster}
+                style={{ display: "block", padding: "16px 32px", border: "1px solid rgba(245,158,11,0.3)", color: "rgba(120,53,15,0.7)", fontWeight: 500, borderRadius: 9999, textAlign: "center", background: "transparent", cursor: isGeneratingPoster ? "wait" : "pointer", fontSize: "1rem", opacity: isGeneratingPoster ? 0.7 : 1 }}
+              >
+                {isGeneratingPoster ? "正在绘制中..." : "生成分享海报"}
+              </button>
             </div>
           </section>
+
+          {/* ========================================== */}
+          {/* ===== 弹窗：展示生成的海报 ===== */}
+          {/* ========================================== */}
+          {showPosterModal && (
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                background: "rgba(0, 0, 0, 0.9)",
+                display: "block",
+                zIndex: 9999,
+                overflow: "auto",
+                padding: "20px 0",
+              }}
+              onClick={() => setShowPosterModal(false)}
+            >
+              {/* 右上角按钮组 */}
+              <div style={{ position: "fixed", top: 20, right: 20, zIndex: 10000 }}>
+                <button
+                  onClick={(e) => { e.stopPropagation(); openPosterInNewTab(); }}
+                  style={{ padding: "8px 16px", background: "#fff", color: "#333", border: "none", borderRadius: 6, cursor: "pointer", marginRight: 10, fontSize: 14 }}
+                >
+                  在新标签页打开
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowPosterModal(false); }}
+                  style={{ padding: "8px 16px", background: "#333", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 20 }}
+                >
+                  ×
+                </button>
+              </div>
+              {posterImageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={posterImageUrl}
+                  alt="海报"
+                  style={{
+                    display: "block",
+                    margin: "0 auto",
+                    maxWidth: "90vw",
+                    maxHeight: "85vh",
+                    objectFit: "contain",
+                    borderRadius: 8,
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+                  }}
+                />
+              )}
+            </div>
+          )}
         </div>
       )}
 
