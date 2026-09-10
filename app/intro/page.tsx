@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function IntroPage() {
   return (
     <div style={{ fontFamily: "'Noto Sans SC', -apple-system, sans-serif", backgroundColor: 'var(--bg-color)', color: 'var(--text-primary)', lineHeight: 1.8, letterSpacing: '0.02em' }}>
@@ -8,7 +10,7 @@ export default function IntroPage() {
       <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(251, 247, 241, 0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--divider)' }}>
         <nav style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <a href="/" style={{ fontFamily: "'Noto Serif SC', serif", fontWeight: 600, fontSize: '1.2rem', color: 'var(--text-primary)', textDecoration: 'none', letterSpacing: '0.1em' }}>内在结构养育</a>
-          <a href="#contact" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.3s' }}>联系我们</a>
+          <Link href="/about#contact" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.3s' }}>联系我们</Link>
         </nav>
       </header>
 
@@ -268,7 +270,7 @@ export default function IntroPage() {
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
           <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.4rem, 2.5vw, 1.8rem)', lineHeight: 1.6, color: 'var(--text-primary)', marginBottom: 16 }}>你对待孩子的方式<br />就是孩子内心世界的建筑图纸</p>
           <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>用结构思维理解孩子，用发展眼光看见成长</p>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: 48 }}>从理解开始，真正成全</p>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 48 }}>从理解开始，一步步成全</p>
           <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.2rem', fontWeight: 600, marginBottom: 8 }}>内在结构养育</p>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>理论与实践的完整育儿体系</p>
         </div>

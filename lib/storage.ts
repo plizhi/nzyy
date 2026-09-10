@@ -1,6 +1,7 @@
 const STORAGE_KEY = "nzyy_intent_data";
 
 export interface IntentData {
+  answers?: number[];
   初心文本?: string;
   共鸣评分?: number;
   感受文本?: string;
