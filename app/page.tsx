@@ -325,6 +325,17 @@ export default function HomePage() {
     }
   }
 
+  function downloadPoster() {
+    if (posterDataUrl) {
+      const link = document.createElement("a");
+      link.download = "育儿初心共鸣画像.jpg";
+      link.href = posterDataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
   if (!mounted) return null;
 
   return (
@@ -949,10 +960,16 @@ export default function HomePage() {
               onClick={() => setShowPosterModal(false)}
             >
               {/* 右上角按钮组 */}
-              <div style={{ position: "fixed", top: 20, right: 20, zIndex: 10000 }}>
+              <div style={{ position: "fixed", top: 20, right: 20, zIndex: 10000, display: "flex", gap: 10 }}>
+                <button
+                  onClick={(e) => { e.stopPropagation(); downloadPoster(); }}
+                  style={{ padding: "8px 16px", background: "#C76D4A", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
+                >
+                  保存到相册
+                </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); openPosterInNewTab(); }}
-                  style={{ padding: "8px 16px", background: "#fff", color: "#333", border: "none", borderRadius: 6, cursor: "pointer", marginRight: 10, fontSize: 14 }}
+                  style={{ padding: "8px 16px", background: "#fff", color: "#333", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
                 >
                   在新标签页打开
                 </button>
