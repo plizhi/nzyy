@@ -39,7 +39,7 @@ export default function ToolsPage() {
         }
       `}</style>
 
-      <div style={{
+      <div className="container" style={{
         maxWidth: 960,
         margin: "0 auto",
         padding: "100px 40px 60px",
@@ -90,6 +90,7 @@ export default function ToolsPage() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => handleToolClick("望杏成林")}
+          className="card-padding"
           style={{
             display: "flex",
             alignItems: "center",
@@ -129,7 +130,7 @@ export default function ToolsPage() {
           }}>
             🌱
           </div>
-          <div>
+          <div className="card-text">
             <h3 style={{
               fontFamily: "'Noto Serif SC', serif",
               fontSize: "1.8rem",
@@ -177,7 +178,7 @@ export default function ToolsPage() {
           测评工具 · 荔枝测评系列
         </div>
 
-        <div style={{
+        <div className="grid-tools" style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
           gap: 24,
@@ -482,7 +483,10 @@ export default function ToolsPage() {
       {/* 响应式 */}
       <style>{`
         @media (max-width: 768px) {
+          .container { padding: 60px 20px 40px !important; }
           .grid-tools { grid-template-columns: 1fr !important; }
+          .card-padding { padding: 32px 24px !important; }
+          .section-padding { padding: 48px 24px !important; }
         }
       `}</style>
     </div>
