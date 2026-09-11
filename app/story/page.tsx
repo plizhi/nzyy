@@ -90,12 +90,12 @@ export default function StoryPage() {
       ctx.fillText("内在人格，才是孩子一生的核心竞争力。", 375, 935);
 
       // 二维码
-      ctx.drawImage(qrImg, 275, 1100, 200, 200);
+      ctx.drawImage(qrImg, 275, 1040, 200, 200);
 
       // 底部文字
       ctx.font = '400 18px "Noto Sans SC", sans-serif';
       ctx.fillStyle = "#806E66";
-      ctx.fillText("长按识别二维码，了解更多", 375, 1290);
+      ctx.fillText("长按识别二维码，了解更多", 375, 1280);
 
       const dataURL = canvas.toDataURL("image/jpeg", 0.85);
       setPosterImageUrl(dataURL);
