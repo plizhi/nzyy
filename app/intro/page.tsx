@@ -95,12 +95,14 @@ export default function IntroPage() {
               { stage: '初中阶段', ability: '心理韧性', exp: '过程虽苦，但我能掌管并相信努力' },
               { stage: '高中阶段', ability: '三观', exp: '我是谁，我相信什么，我为何而活' },
             ].map((item, i) => (
-              <div key={i} className="stagger-fade-up" style={{ display: 'flex', alignItems: 'center', background: 'var(--card-bg)', padding: '24px 32px', borderRadius: 'var(--radius-m)', borderLeft: '4px solid var(--accent-color)', boxShadow: 'var(--shadow-soft)', gap: 24, transition: 'transform 0.3s, box-shadow 0.3s' }}
+              <div key={i} className="stagger-fade-up" style={{ background: 'var(--card-bg)', padding: '24px 32px', borderRadius: 'var(--radius-m)', borderLeft: '4px solid var(--accent-color)', boxShadow: 'var(--shadow-soft)', transition: 'transform 0.3s, box-shadow 0.3s' }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateX(4px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(62, 44, 44, 0.08)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateX(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--accent-color)', fontWeight: 500, minWidth: 140 }}>{item.stage}</span>
-                <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.2rem', fontWeight: 600, minWidth: 100 }}>{item.ability}</span>
-                <span style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', flex: 1 }}>{item.exp}</span>
+                <div style={{ display: 'flex', gap: 24, alignItems: 'baseline', marginBottom: 8 }}>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--accent-color)', fontWeight: 500, minWidth: 140 }}>{item.stage}</span>
+                  <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.2rem', fontWeight: 600 }}>{item.ability}</span>
+                </div>
+                <span style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>{item.exp}</span>
               </div>
             ))}
           </div>
@@ -157,7 +159,7 @@ export default function IntroPage() {
                   { title: '彼此支持', desc: '我愿意为你加持，无论你做什么选择' },
                 ].map((item, i) => (
                   <li key={i} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                    <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.2rem', color: 'var(--accent-color)', fontWeight: 600, minWidth: 24 }}>·</span>
+                    <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.2rem', color: 'var(--accent-color)', fontWeight: 600, minWidth: 24 }}>{i + 6}</span>
                     <div>
                       <strong style={{ display: 'block', fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: 4 }}>{item.title}</strong>
                       <span style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>{item.desc}</span>
