@@ -90,21 +90,19 @@ export default function ToolsPage() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => handleToolClick("望杏成林")}
-          className="card-padding"
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 40,
-            background: "linear-gradient(135deg, #FFFCF7 0%, #FDF6EE 100%)",
+            background: "#FFFCF7",
             borderRadius: 16,
-            padding: "48px 40px",
-            marginBottom: 32,
+            padding: "40px 32px",
             boxShadow: "0 8px 30px rgba(62, 44, 44, 0.04)",
             border: "1px solid #EAE0D5",
             textDecoration: "none",
             transition: "all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)",
             position: "relative",
             overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 360,
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = "translateY(-6px)";
@@ -117,44 +115,31 @@ export default function ToolsPage() {
             e.currentTarget.style.borderColor = "#EAE0D5";
           }}
         >
-          <div style={{
-            fontSize: "3rem",
-            background: "#F3ECE3",
-            width: 100,
-            height: 100,
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
+          <div style={{ fontSize: "2rem", marginBottom: 24 }}>🌱</div>
+          <h3 style={{
+            fontFamily: "'Noto Serif SC', serif",
+            fontSize: "1.5rem",
+            marginBottom: 8,
+            color: "#3E2C2C",
           }}>
-            🌱
+            望杏成林
+          </h3>
+          <div style={{
+            color: "#C76D4A",
+            fontSize: "0.9rem",
+            marginBottom: 24,
+            paddingBottom: 24,
+            borderBottom: "1px solid #EAE0D5",
+          }}>
+            日常陪伴与滋养
           </div>
-          <div className="card-text">
-            <h3 style={{
-              fontFamily: "'Noto Serif SC', serif",
-              fontSize: "1.8rem",
-              marginBottom: 12,
-              color: "#3E2C2C",
-            }}>
-              望杏成林
-            </h3>
-            <div style={{
-              color: "#C76D4A",
-              fontSize: "0.95rem",
-              marginBottom: 16,
-              fontWeight: 500,
-            }}>
-              日常陪伴与滋养
-            </div>
-            <p style={{
-              color: "#806E66",
-              fontSize: "1rem",
-              maxWidth: 600,
-            }}>
-              亲子成长记录、情绪命名、习惯养成、成长瞬间捕捉。服务于六大内在结构的日常滋养，覆盖多个心神能力的敏感期。
-            </p>
-          </div>
+          <p style={{
+            color: "#806E66",
+            fontSize: "0.95rem",
+            flex: 1,
+          }}>
+            亲子成长记录、情绪命名、习惯养成、成长瞬间捕捉。服务于六大内在结构的日常滋养，覆盖多个心神能力的敏感期。
+          </p>
         </a>
 
         {/* 测评工具 */}
