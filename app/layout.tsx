@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   keywords: "育儿, 内在结构养育, 家庭教育, 亲子关系, 心理养育",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: {

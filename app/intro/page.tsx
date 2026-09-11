@@ -28,7 +28,7 @@ export default function IntroPage() {
         {/* 01 它是什么 */}
         <section style={{ padding: '80px 0' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 48 }}>
-            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }}>01</span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }} className="section-num">01</span>
             <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.6rem, 3vw, 2rem)', fontWeight: 500, color: 'var(--text-primary)' }}>它是什么</h2>
           </div>
           <p style={{ fontSize: '1.05rem', color: 'var(--text-primary)', lineHeight: 2, marginBottom: 16 }}>内在结构养育是一套育儿理论框架。</p>
@@ -41,7 +41,7 @@ export default function IntroPage() {
         {/* 02 为什么需要它 */}
         <section style={{ padding: '80px 0' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 48 }}>
-            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }}>02</span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }} className="section-num">02</span>
             <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.6rem, 3vw, 2rem)', fontWeight: 500, color: 'var(--text-primary)' }}>为什么需要它</h2>
           </div>
           <p style={{ fontSize: '1.05rem', color: 'var(--text-primary)', lineHeight: 2, marginBottom: 16 }}>孩子出了问题——成绩下滑、沉迷手机、叛逆——家长的第一反应往往是&quot;怎么解决&quot;。</p>
@@ -55,7 +55,7 @@ export default function IntroPage() {
         {/* 03 核心框架 */}
         <section style={{ padding: '80px 0' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 48 }}>
-            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }}>03</span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }} className="section-num">03</span>
             <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.6rem, 3vw, 2rem)', fontWeight: 500, color: 'var(--text-primary)' }}>核心框架</h2>
           </div>
           <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: 32 }}>动静兼顾的理论基石</p>
@@ -116,12 +116,12 @@ export default function IntroPage() {
         {/* 04 育儿初心 */}
         <section style={{ padding: '80px 0' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 48 }}>
-            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }}>04</span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }} className="section-num">04</span>
             <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.6rem, 3vw, 2rem)', fontWeight: 500, color: 'var(--text-primary)' }}>育儿初心</h2>
           </div>
           <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: 32 }}>养育的目标是什么</p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 40 }} className="parent-grid">
             {/* 成全孩子 */}
             <div>
               <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', marginBottom: 8, color: 'var(--accent-color)' }}>成全孩子</h3>
@@ -175,7 +175,7 @@ export default function IntroPage() {
         {/* 落地工具 */}
         <section style={{ padding: '80px 0' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 48 }}>
-            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }}>05</span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }} className="section-num">05</span>
             <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.6rem, 3vw, 2rem)', fontWeight: 500, color: 'var(--text-primary)' }}>落地工具</h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24, marginTop: 48 }}>
@@ -248,7 +248,7 @@ export default function IntroPage() {
       <section style={{ background: 'var(--bg-soft)', padding: '80px 32px', margin: '80px 0' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 48, justifyContent: 'center' }}>
-            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }}>06</span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '1.4rem', color: 'var(--accent-color)', fontWeight: 600 }} className="section-num">06</span>
             <h2 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 'clamp(1.6rem, 3vw, 2rem)', fontWeight: 500, color: 'var(--text-primary)' }}>创始故事</h2>
           </div>
           <p style={{ fontSize: '1.05rem', lineHeight: 2, color: 'var(--text-primary)', marginBottom: 32, textAlign: 'left' }}>
@@ -300,6 +300,14 @@ export default function IntroPage() {
         </div>
       </footer>
 
+      {/* 响应式样式 */}
+      <style>{`
+        @media (max-width: 768px) {
+          .parent-grid { grid-template-columns: 1fr !important; }
+          .section-num { font-size: 1.2rem !important; }
+          .section-title { font-size: 1.4rem !important; }
+        }
+      `}</style>
     </div>
   );
 }
