@@ -1,8 +1,124 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 export default function StoryPage() {
+  const [showPosterModal, setShowPosterModal] = useState(false);
+  const [posterImageUrl, setPosterImageUrl] = useState("");
+  const [isGeneratingPoster, setIsGeneratingPoster] = useState(false);
+
+  async function generatePoster() {
+    setIsGeneratingPoster(true);
+
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent("https://nzyy.cc/story")}`;
+    const qrImg = new Image();
+    qrImg.crossOrigin = "anonymous";
+    qrImg.src = qrUrl;
+    await new Promise((resolve) => {
+      qrImg.onload = resolve;
+      qrImg.onerror = resolve;
+    });
+
+    await document.fonts.ready;
+
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 750;
+      canvas.height = 1334;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("无法获取 Canvas 上下文");
+
+      // 背景渐变
+      const gradient = ctx.createLinearGradient(0, 0, 0, 1334);
+      gradient.addColorStop(0, "#FBF7F1");
+      gradient.addColorStop(1, "#F3ECE3");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 750, 1334);
+
+      ctx.textAlign = "center";
+
+      // 顶部品牌名
+      ctx.font = '500 24px "Noto Sans SC", sans-serif';
+      ctx.fillStyle = "#806E66";
+      ctx.fillText("@内在结构养育", 375, 110);
+
+      // 标题
+      ctx.font = '600 32px "Noto Serif SC", serif';
+      ctx.fillStyle = "#C76D4A";
+      ctx.fillText("朋大大自述", 375, 155);
+
+      // 引言
+      ctx.font = '400 28px "Noto Serif SC", serif';
+      ctx.fillStyle = "#3E2C2C";
+      ctx.fillText("女儿去清华报到的那天，", 375, 380);
+      ctx.fillText("天色明朗，阳光正好。", 375, 420);
+
+      // 核心金句
+      ctx.font = '500 36px "Noto Serif SC", serif';
+      ctx.fillStyle = "#3E2C2C";
+
+      // 换行处理长句
+      const mainQuote = "每个孩子天生自带内在力量";
+      const subQuote1 = "从不缺少成长的能力";
+      const subQuote2 = "只是缺少被看见、被理解、";
+      const subQuote3 = "被科学正向引导";
+
+      ctx.fillText(mainQuote, 375, 600);
+
+      ctx.font = '400 32px "Noto Sans SC", sans-serif';
+      ctx.fillStyle = "#806E66";
+      ctx.fillText(subQuote1, 375, 650);
+
+      ctx.fillStyle = "#C76D4A";
+      ctx.fillText(subQuote2, 375, 710);
+      ctx.fillText(subQuote3, 375, 755);
+
+      // 虚线边框引言框
+      ctx.strokeStyle = "#EAE0D5";
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(100, 850, 550, 180, 16);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 引言框内文字
+      ctx.font = '400 22px "Noto Sans SC", sans-serif';
+      ctx.fillStyle = "#806E66";
+      ctx.fillText("比起拔尖的分数，健全、稳定、坚韧的", 375, 900);
+      ctx.fillText("内在人格，才是孩子一生的核心竞争力。", 375, 935);
+
+      // 二维码
+      ctx.drawImage(qrImg, 275, 1100, 200, 200);
+
+      // 底部文字
+      ctx.font = '400 18px "Noto Sans SC", sans-serif';
+      ctx.fillStyle = "#806E66";
+      ctx.fillText("长按识别二维码，了解更多", 375, 1290);
+
+      const dataURL = canvas.toDataURL("image/jpeg", 0.85);
+      setPosterImageUrl(dataURL);
+      setShowPosterModal(true);
+    } catch (err) {
+      console.error("海报生成失败:", err);
+      alert("海报生成失败，请重试");
+    } finally {
+      setIsGeneratingPoster(false);
+    }
+  }
+
+  function downloadPoster() {
+    if (posterImageUrl) {
+      const link = document.createElement("a");
+      link.download = "朋大大自述.jpg";
+      link.href = posterImageUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
   return (
     <>
       <style>{`
@@ -181,9 +297,65 @@ export default function StoryPage() {
 
         <div style={{ marginTop: '60px' }}>
           <Link href="/" className="cta-btn">对齐我的育儿初心</Link>
-          <button className="cta-btn secondary" style={{ marginTop: '12px', width: '100%', cursor: 'pointer', border: 'none' }}>生成分享海报</button>
+          <button
+            className="cta-btn secondary"
+            style={{ marginTop: '12px', width: '100%', cursor: 'pointer', border: 'none' }}
+            onClick={generatePoster}
+            disabled={isGeneratingPoster}
+          >
+            {isGeneratingPoster ? '生成中...' : '生成分享海报'}
+          </button>
         </div>
       </div>
+
+      {/* 海报弹窗 */}
+      {showPosterModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+          }}
+          onClick={() => setShowPosterModal(false)}
+        >
+          <div style={{ position: 'fixed', top: 20, right: 20, display: 'flex', gap: 10 }}>
+            <button
+              onClick={(e) => { e.stopPropagation(); downloadPoster(); }}
+              style={{ padding: '8px 16px', background: '#C76D4A', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 14 }}
+            >
+              保存到相册
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowPosterModal(false); }}
+              style={{ padding: '8px 16px', background: '#333', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 20 }}
+            >
+              ×
+            </button>
+          </div>
+          {posterImageUrl && (
+            <img
+              src={posterImageUrl}
+              alt="海报"
+              style={{
+                maxWidth: '90vw',
+                maxHeight: '85vh',
+                objectFit: 'contain',
+                borderRadius: 8,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            />
+          )}
+        </div>
+      )}
     </>
   );
 }
