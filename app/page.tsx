@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getIntentData, saveIntentData } from "@/lib/storage";
+import Modal from "@/components/Modal";
 
 type Step = "intro" | "test" | "result";
 
@@ -14,6 +15,19 @@ const colors = {
   accentHover: "#B85F3E",
   divider: "#EAE0D5",
 };
+
+const [consultModal, setConsultModal] = useState(false);
+const [consultForm, setConsultForm] = useState({ name: "", phone: "", age: "", description: "" });
+const [consultSubmitted, setConsultSubmitted] = useState(false);
+
+function handleConsultSubmit(e: React.FormEvent) {
+  e.preventDefault();
+  if (!consultForm.phone) return;
+  const list = JSON.parse(localStorage.getItem("nzyy_consults") || "[]");
+  list.push({ ...consultForm, time: new Date().toISOString() });
+  localStorage.setItem("nzyy_consults", JSON.stringify(list));
+  setConsultSubmitted(true);
+}
 
 const 成全孩子 = [
   { text: "永葆对生命与世界的热情和好奇心" },
@@ -859,7 +873,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 {/* 咨询服务 */}
-                <a href="/consult" style={{ background: "#FFFCF7", padding: "36px 28px", borderRadius: 20, boxShadow: "0 8px 32px rgba(62, 44, 44, 0.04)", border: "1px solid rgba(234, 224, 213, 0.4)", transition: "transform 0.3s ease, box-shadow 0.3s ease", cursor: "pointer", textDecoration: "none", display: "block" }}>
+                <div onClick={() => setConsultModal(true)} style={{ background: "#FFFCF7", padding: "36px 28px", borderRadius: 20, boxShadow: "0 8px 32px rgba(62, 44, 44, 0.04)", border: "1px solid rgba(234, 224, 213, 0.4)", transition: "transform 0.3s ease, box-shadow 0.3s ease", cursor: "pointer", textDecoration: "none", display: "block" }}>
                   <div style={{ fontSize: "2rem", marginBottom: 20 }}>💬</div>
                   <h4 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.3rem", marginBottom: 6, color: colors.textPrimary }}>咨询服务</h4>
                   <p style={{ color: colors.accent, fontSize: "0.85rem", marginBottom: 16 }}>深度人工服务</p>
@@ -877,7 +891,7 @@ export default function HomePage() {
                       <span style={{ fontSize: "0.8rem", fontWeight: 500, color: colors.textPrimary }}>39800元/年</span>
                     </div>
                   </div>
-                </a>
+                </div>
               </div>
             </section>
           </div>
@@ -1038,6 +1052,56 @@ export default function HomePage() {
           }
         }
       `}</style>
+
+      <Modal isOpen={consultModal} onClose={() => { setConsultModal(false); setConsultSubmitted(false); }}>
+        {!consultSubmitted ? (
+          <div>
+            <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 8, textAlign: "center" }}>咨询服务</h3>
+            <p style={{ fontSize: "0.9rem", color: "#806E66", textAlign: "center", marginBottom: 24 }}>填写表单后，我们会尽快与你联系</p>
+
+            <form onSubmit={handleConsultSubmit}>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>联系人称谓</label>
+                <input type="text" value={consultForm.name} onChange={(e) => setConsultForm({ ...consultForm, name: e.target.value })} placeholder="怎么称呼你" style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #EAE0D5", borderRadius: 10, fontSize: "0.95rem", outline: "none", boxSizing: "border-box" }} />
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>联系电话 *</label>
+                <input type="tel" value={consultForm.phone} onChange={(e) => setConsultForm({ ...consultForm, phone: e.target.value })} placeholder="便于我们联系你" style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #EAE0D5", borderRadius: 10, fontSize: "0.95rem", outline: "none", boxSizing: "border-box" }} />
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>孩子基本信息</label>
+                <select value={consultForm.age} onChange={(e) => setConsultForm({ ...consultForm, age: e.target.value })} style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #EAE0D5", borderRadius: 10, fontSize: "0.95rem", outline: "none", backgroundColor: "#fff", boxSizing: "border-box" }}>
+                  <option value="">请选择孩子年龄段</option>
+                  <option value="幼儿">幼儿园（3-6岁）</option>
+                  <option value="小学低">小学低年级（1-3年级）</option>
+                  <option value="小学高">小学高年级（4-6年级）</option>
+                  <option value="初中">初中（7-9年级）</option>
+                  <option value="高中">高中（10-12年级）</option>
+                </select>
+              </div>
+
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>咨询内容</label>
+                <textarea value={consultForm.description} onChange={(e) => setConsultForm({ ...consultForm, description: e.target.value })} placeholder="简单描述孩子的情况和你的困扰" rows={3} style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #EAE0D5", borderRadius: 10, fontSize: "0.95rem", outline: "none", resize: "none", boxSizing: "border-box" }} />
+              </div>
+
+              <button type="submit" style={{ width: "100%", padding: "14px 32px", backgroundColor: "#C76D4A", color: "#fff", border: "none", borderRadius: 9999, fontSize: "0.95rem", fontWeight: 500, cursor: "pointer" }}>
+                提交咨询
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: "3rem", marginBottom: 16 }}>✓</div>
+            <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 12 }}>提交成功</h3>
+            <p style={{ fontSize: "0.95rem", color: "#806E66", lineHeight: 1.7 }}>
+              我们会尽快通过电话<br />与你联系
+            </p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

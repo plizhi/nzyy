@@ -1,8 +1,28 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import Modal from "@/components/Modal";
 
 export default function IntroPage() {
+  const [consultModal, setConsultModal] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    age: "",
+    type: "" as "crisis" | "correct" | "coach" | "",
+    description: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleConsultSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.phone) return;
+    const list = JSON.parse(localStorage.getItem("nzyy_consults") || "[]");
+    list.push({ ...form, time: new Date().toISOString() });
+    localStorage.setItem("nzyy_consults", JSON.stringify(list));
+    setSubmitted(true);
+  }
   return (
     <div style={{ fontFamily: "'Noto Sans SC', -apple-system, sans-serif", backgroundColor: 'var(--bg-color)', color: 'var(--text-primary)', lineHeight: 1.8, letterSpacing: '0.02em' }}>
 
@@ -221,6 +241,7 @@ export default function IntroPage() {
             </div>
             {/* 咨询服务 */}
             <div style={{ background: 'var(--card-bg)', padding: '36px 28px', borderRadius: 'var(--radius-l)', boxShadow: 'var(--shadow-soft)', border: '1px solid rgba(234, 224, 213, 0.4)', transition: 'transform 0.3s ease, box-shadow 0.3s ease', cursor: 'pointer' }}
+              onClick={() => setConsultModal(true)}
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(62, 44, 44, 0.08)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}>
               <div style={{ fontSize: '2rem', marginBottom: 20 }}>💬</div>
@@ -310,6 +331,67 @@ export default function IntroPage() {
           .section-title { font-size: 1.4rem !important; }
         }
       `}</style>
+
+      <Modal isOpen={consultModal} onClose={() => { setConsultModal(false); setSubmitted(false); }}>
+        {!submitted ? (
+          <div>
+            <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 8, textAlign: "center" }}>咨询服务</h3>
+            <p style={{ fontSize: "0.9rem", color: "#806E66", textAlign: "center", marginBottom: 24 }}>填写表单后，我们会尽快与你联系</p>
+
+            <form onSubmit={handleConsultSubmit}>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>联系人称谓</label>
+                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="怎么称呼你" style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #EAE0D5", borderRadius: 10, fontSize: "0.95rem", outline: "none", boxSizing: "border-box" }} />
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>联系电话 *</label>
+                <input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="便于我们联系你" style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #EAE0D5", borderRadius: 10, fontSize: "0.95rem", outline: "none", boxSizing: "border-box" }} />
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>孩子基本信息</label>
+                <select value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })} style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #EAE0D5", borderRadius: 10, fontSize: "0.95rem", outline: "none", backgroundColor: "#fff", boxSizing: "border-box" }}>
+                  <option value="">请选择孩子年龄段</option>
+                  <option value="幼儿">幼儿园（3-6岁）</option>
+                  <option value="小学低">小学低年级（1-3年级）</option>
+                  <option value="小学高">小学高年级（4-6年级）</option>
+                  <option value="初中">初中（7-9年级）</option>
+                  <option value="高中">高中（10-12年级）</option>
+                </select>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>咨询类型</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[{ id: "crisis", name: "危机干预" }, { id: "correct", name: "矫正计划" }, { id: "coach", name: "陪跑服务" }].map(item => (
+                    <button key={item.id} type="button" onClick={() => setForm({ ...form, type: item.id as any })} style={{ flex: 1, padding: "10px 8px", border: form.type === item.id ? "2px solid #C76D4A" : "1.5px solid #EAE0D5", borderRadius: 10, background: form.type === item.id ? "rgba(199,109,74,0.05)" : "transparent", cursor: "pointer", fontSize: "0.8rem", color: "#3E2C2C" }}>
+                      {item.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "#806E66", marginBottom: 6 }}>咨询内容</label>
+                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="简单描述孩子的情况和你的困扰" rows={3} style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #EAE0D5", borderRadius: 10, fontSize: "0.95rem", outline: "none", resize: "none", boxSizing: "border-box" }} />
+              </div>
+
+              <button type="submit" style={{ width: "100%", padding: "14px 32px", backgroundColor: "#C76D4A", color: "#fff", border: "none", borderRadius: 9999, fontSize: "0.95rem", fontWeight: 500, cursor: "pointer" }}>
+                提交咨询
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: "3rem", marginBottom: 16 }}>✓</div>
+            <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 12 }}>提交成功</h3>
+            <p style={{ fontSize: "0.95rem", color: "#806E66", lineHeight: 1.7 }}>
+              我们会尽快通过电话<br />与你联系
+            </p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

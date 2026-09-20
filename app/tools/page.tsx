@@ -1,11 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { trackToolClick } from "@/lib/tracking";
+import Modal from "@/components/Modal";
 
 export default function ToolsPage() {
+  const [pendingModal, setPendingModal] = useState(false);
+
   function handleToolClick(name: string) {
     trackToolClick(name);
+  }
+
+  function handlePendingClick(name: string) {
+    trackToolClick(name);
+    setPendingModal(true);
   }
 
   return (
@@ -243,8 +252,8 @@ export default function ToolsPage() {
 
           {/* 荔心卷 */}
           <a
-            href="/subscribe"
-            onClick={() => handleToolClick("荔心卷")}
+            href="#"
+            onClick={(e) => { e.preventDefault(); handlePendingClick("荔心卷"); }}
             style={{
               background: "#FFFCF7",
               borderRadius: 16,
@@ -314,8 +323,8 @@ export default function ToolsPage() {
 
           {/* 荔升卷 */}
           <a
-            href="/subscribe"
-            onClick={() => handleToolClick("荔升卷")}
+            href="#"
+            onClick={(e) => { e.preventDefault(); handlePendingClick("荔升卷"); }}
             style={{
               background: "#FFFCF7",
               borderRadius: 16,
@@ -474,6 +483,22 @@ export default function ToolsPage() {
           .section-padding { padding: 48px 24px !important; }
         }
       `}</style>
+
+      <Modal isOpen={pendingModal} onClose={() => setPendingModal(false)}>
+        <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <div style={{ fontSize: "3rem", marginBottom: 20 }}>⏳</div>
+          <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.5rem", color: "#3E2C2C", marginBottom: 12 }}>
+            即将上线
+          </h3>
+          <p style={{ fontSize: "1rem", color: "#806E66", lineHeight: 1.8, marginBottom: 24 }}>
+            荔心卷和荔升卷正在精心打磨中<br />
+            上线后第一时间通知你
+          </p>
+          <p style={{ fontSize: "0.9rem", color: "#806E66" }}>
+            敬请期待
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 }
