@@ -16,19 +16,6 @@ const colors = {
   divider: "#EAE0D5",
 };
 
-const [consultModal, setConsultModal] = useState(false);
-const [consultForm, setConsultForm] = useState({ name: "", phone: "", age: "", description: "" });
-const [consultSubmitted, setConsultSubmitted] = useState(false);
-
-function handleConsultSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  if (!consultForm.phone) return;
-  const list = JSON.parse(localStorage.getItem("nzyy_consults") || "[]");
-  list.push({ ...consultForm, time: new Date().toISOString() });
-  localStorage.setItem("nzyy_consults", JSON.stringify(list));
-  setConsultSubmitted(true);
-}
-
 const 成全孩子 = [
   { text: "永葆对生命与世界的热情和好奇心" },
   { text: "识风险、知进退" },
@@ -93,6 +80,18 @@ export default function HomePage() {
   const [posterDataUrl, setPosterDataUrl] = useState("");
   const [isGeneratingPoster, setIsGeneratingPoster] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
+  const [consultModal, setConsultModal] = useState(false);
+  const [consultForm, setConsultForm] = useState({ name: "", phone: "", age: "", description: "" });
+  const [consultSubmitted, setConsultSubmitted] = useState(false);
+
+  function handleConsultSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!consultForm.phone) return;
+    const list = JSON.parse(localStorage.getItem("nzyy_consults") || "[]");
+    list.push({ ...consultForm, time: new Date().toISOString() });
+    localStorage.setItem("nzyy_consults", JSON.stringify(list));
+    setConsultSubmitted(true);
+  }
 
   const totalQuestions = questions.length;
 
