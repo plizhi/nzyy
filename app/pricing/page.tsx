@@ -101,6 +101,7 @@ export default function PricingPage() {
         .vitality-box { animation: vitalityGlow 4s ease-in-out infinite; }
         @media (max-width: 768px) {
           .concept-grid { grid-template-columns: 1fr !important; }
+          .tier-benefits-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
@@ -167,7 +168,7 @@ export default function PricingPage() {
                 <div style={{ fontSize: "0.95rem", color: tier.dark ? "#FFFCF7" : "#3E2C2C" }}>{tier.valueDesc}</div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, marginBottom: 24 }}>
+              <div className="tier-benefits-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, marginBottom: 24 }}>
                 <div>
                   <div style={{ fontSize: "0.9rem", fontWeight: 600, color: tier.dark ? "#E8B59A" : "#3E2C2C", marginBottom: 12 }}>解决什么问题</div>
                   <ul style={{ listStyle: "none", padding: 0 }}>
