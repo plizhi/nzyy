@@ -84,9 +84,16 @@ export default function HomePage() {
   const [consultForm, setConsultForm] = useState({ name: "", phone: "", age: "", description: "" });
   const [consultSubmitted, setConsultSubmitted] = useState(false);
 
-  // 保存结果相关
-  const [saveModal, setSaveModal] = useState(false);
-  const [savePhone, setSavePhone] = useState("");
+  // 手机号注册相关
+  const [registeredPhone, setRegisteredPhone] = useState<string | null>(null);
+  const [phoneModal, setPhoneModal] = useState<'limit' | 'register' | 'save' | 'overwrite' | null>(null);
+  const [phoneInput, setPhoneInput] = useState("");
+  const [todayRemaining, setTodayRemaining] = useState(3);
+  const [hasRecentRecord, setHasRecentRecord] = useState(false);
+  const [latestRecordId, setLatestRecordId] = useState<number | null>(null);
+  const [saveChoice, setSaveChoice] = useState<'save' | 'skip' | null>(null);
+
+  // 保存结果相关（历史记录）
   const [saveSubmitted, setSaveSubmitted] = useState(false);
   const [savedTestId, setSavedTestId] = useState<number | null>(null);
   const [historyModal, setHistoryModal] = useState(false);
@@ -101,24 +108,76 @@ export default function HomePage() {
     setConsultSubmitted(true);
   }
 
-  async function handleSaveSubmit(e: React.FormEvent) {
+  // 检查手机号是否已注册（localStorage）
+  useEffect(() => {
+    const saved = localStorage.getItem("nzyy_phone");
+    if (saved) {
+      setRegisteredPhone(saved);
+    }
+  }, []);
+
+  // 检查测试限制
+  async function checkTestLimit(phone: string) {
+    try {
+      const res = await fetch(`/api/intent/check-limit?phone=${encodeURIComponent(phone)}`);
+      const data = await res.json();
+      if (data.success) {
+        setTodayRemaining(data.remaining);
+        setHasRecentRecord(data.has_recent_record);
+        setLatestRecordId(data.latest_record_id);
+        return data.can_test;
+      }
+    } catch (err) {
+      console.error("检查限制失败", err);
+    }
+    return false;
+  }
+
+  // 提交手机号（注册或验证）
+  async function handlePhoneSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!savePhone) return;
+    if (!phoneInput) return;
+
+    const phone = phoneInput.trim();
+    const canTest = await checkTestLimit(phone);
+
+    if (!canTest) {
+      setPhoneModal('limit');
+      return;
+    }
+
+    // 保存手机号到localStorage
+    localStorage.setItem("nzyy_phone", phone);
+    setRegisteredPhone(phone);
+    setPhoneModal(null);
+
+    // 继续显示结果
+    setStep("result");
+  }
+
+  // 保存测试结果
+  async function handleSaveResult(overwrite: boolean = false) {
+    if (!registeredPhone) return;
+
     try {
       const res = await fetch("/api/intent/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          phone: savePhone,
+          phone: registeredPhone,
           answers,
           score,
           ai_insight: aiInsight,
+          overwrite,
+          record_id: overwrite ? latestRecordId : undefined,
         }),
       });
       const data = await res.json();
       if (data.success) {
         setSavedTestId(data.id);
         setSaveSubmitted(true);
+        setSaveChoice('save');
+        setPhoneModal(null);
       }
     } catch (err) {
       console.error("保存失败", err);
@@ -126,9 +185,9 @@ export default function HomePage() {
   }
 
   async function handleViewHistory() {
-    if (!savePhone) return;
+    if (!registeredPhone) return;
     try {
-      const res = await fetch(`/api/intent/history?phone=${encodeURIComponent(savePhone)}`);
+      const res = await fetch(`/api/intent/history?phone=${encodeURIComponent(registeredPhone)}`);
       const data = await res.json();
       if (data.success) {
         setHistoryList(data.tests);
@@ -218,9 +277,22 @@ export default function HomePage() {
         (newAnswers[5] + newAnswers[6] + newAnswers[7] + newAnswers[8]) / 4;
       const finalScore = Math.round((dim1Avg * 0.6 + dim2Avg * 0.4) * 20);
       setScore(finalScore);
-      setStep("result");
-      // 保存到 localStorage，下次打开直接显示结果
       saveIntentData({ answers: newAnswers, 共鸣度: finalScore });
+
+      // 检查是否已注册手机号
+      if (registeredPhone) {
+        // 已注册：检查次数限制，然后显示结果
+        checkTestLimit(registeredPhone).then((canTest) => {
+          if (canTest) {
+            setStep("result");
+          } else {
+            setPhoneModal('limit');
+          }
+        });
+      } else {
+        // 未注册：先要求填手机号
+        setPhoneModal('register');
+      }
     }
   }
 
@@ -985,19 +1057,12 @@ export default function HomePage() {
             <p style={{ fontSize: "0.9rem", color: colors.textSecondary }}>理论与实践的完整育儿体系</p>
           </footer>
 
-          {/* 保存结果 + 分享 */}
+          {/* 已保存用户 + 分享 */}
           <section style={{ padding: "48px 32px", background: "#FBF7F1" }}>
             <div style={{ maxWidth: 500, margin: "0 auto", display: "flex", flexDirection: "column", gap: 12 }}>
-              {!saveSubmitted ? (
-                <button
-                  onClick={() => setSaveModal(true)}
-                  style={{ display: "block", padding: "16px 32px", backgroundColor: "#f59e0b", color: "#fff", fontWeight: 500, borderRadius: 9999, textAlign: "center", border: "none", cursor: "pointer", fontSize: "1rem" }}
-                >
-                  保存结果
-                </button>
-              ) : (
+              {saveSubmitted && (
                 <div style={{ textAlign: "center", padding: "16px", background: "rgba(199,109,74,0.1)", borderRadius: 16 }}>
-                  <div style={{ fontSize: "1rem", color: "#C76D4A", marginBottom: 8 }}>已保存</div>
+                  <div style={{ fontSize: "1rem", color: "#C76D4A", marginBottom: 8 }}>已保存到账号</div>
                   <button
                     onClick={handleViewHistory}
                     style={{ fontSize: "0.9rem", color: "#806E66", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
@@ -1015,6 +1080,47 @@ export default function HomePage() {
               </button>
             </div>
           </section>
+
+          {/* 是否保存提示（注册用户测完后显示） */}
+          {showResult && registeredPhone && !saveSubmitted && !saveChoice && (
+            <div style={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background: "#FFFBF5",
+              borderTop: "1px solid #EAE0D5",
+              padding: "16px 24px",
+              zIndex: 50,
+              boxShadow: "0 -4px 20px rgba(62,44,44,0.08)"
+            }}>
+              <div style={{ maxWidth: 500, margin: "0 auto", textAlign: "center" }}>
+                <p style={{ fontSize: "0.9rem", color: "#806E66", marginBottom: 12 }}>
+                  是否保存到账号？保存后可查看历史变化
+                </p>
+                <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+                  <button
+                    onClick={() => {
+                      if (hasRecentRecord) {
+                        setPhoneModal('overwrite');
+                      } else {
+                        handleSaveResult(false);
+                      }
+                    }}
+                    style={{ padding: "12px 32px", backgroundColor: "#C76D4A", color: "#fff", border: "none", borderRadius: 9999, fontSize: "0.95rem", cursor: "pointer" }}
+                  >
+                    保存
+                  </button>
+                  <button
+                    onClick={() => setSaveChoice('skip')}
+                    style={{ padding: "12px 32px", backgroundColor: "transparent", color: "#806E66", border: "1.5px solid #EAE0D5", borderRadius: 9999, fontSize: "0.95rem", cursor: "pointer" }}
+                  >
+                    跳过
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* ========================================== */}
           {/* ===== 弹窗：展示生成的海报 ===== */}
@@ -1166,34 +1272,6 @@ export default function HomePage() {
       </Modal>
 
       {/* 保存结果弹窗 */}
-      <Modal isOpen={saveModal} onClose={() => { setSaveModal(false); setSavePhone(""); }}>
-        <div>
-          <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 8, textAlign: "center" }}>保存结果</h3>
-          <p style={{ fontSize: "0.9rem", color: "#806E66", textAlign: "center", marginBottom: 24 }}>输入手机号，永久保存你的测试记录</p>
-
-          <form onSubmit={handleSaveSubmit}>
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", fontSize: "0.9rem", color: "#806E66", marginBottom: 8 }}>手机号 *</label>
-              <input
-                type="tel"
-                value={savePhone}
-                onChange={(e) => setSavePhone(e.target.value)}
-                placeholder="用于保存和查询你的测试记录"
-                style={{ width: "100%", padding: "14px 16px", border: "1.5px solid #EAE0D5", borderRadius: 12, fontSize: "1rem", outline: "none", boxSizing: "border-box" }}
-              />
-            </div>
-
-            <button type="submit" style={{ width: "100%", padding: "14px 32px", backgroundColor: "#C76D4A", color: "#fff", border: "none", borderRadius: 9999, fontSize: "1rem", fontWeight: 500, cursor: "pointer" }}>
-              保存
-            </button>
-          </form>
-
-          <p style={{ textAlign: "center", marginTop: 16, fontSize: "0.8rem", color: "#806E66" }}>
-            同一手机号可保存多次，查看历史变化
-          </p>
-        </div>
-      </Modal>
-
       {/* 历史记录弹窗 */}
       <Modal isOpen={historyModal} onClose={() => setHistoryModal(false)}>
         <div>
@@ -1224,6 +1302,78 @@ export default function HomePage() {
           >
             关闭
           </button>
+        </div>
+      </Modal>
+
+      {/* 手机号相关弹窗 */}
+      <Modal isOpen={phoneModal === 'register'} onClose={() => { setPhoneModal(null); setPhoneInput(""); }}>
+        <div>
+          <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 8, textAlign: "center" }}>查看完整报告</h3>
+          <p style={{ fontSize: "0.9rem", color: "#806E66", textAlign: "center", marginBottom: 24 }}>请输入手机号，继续查看你的报告</p>
+
+          <form onSubmit={handlePhoneSubmit}>
+            <div style={{ marginBottom: 24 }}>
+              <input
+                type="tel"
+                value={phoneInput}
+                onChange={(e) => setPhoneInput(e.target.value)}
+                placeholder="手机号"
+                style={{ width: "100%", padding: "14px 16px", border: "1.5px solid #EAE0D5", borderRadius: 12, fontSize: "1rem", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+
+            <button type="submit" style={{ width: "100%", padding: "14px 32px", backgroundColor: "#C76D4A", color: "#fff", border: "none", borderRadius: 9999, fontSize: "1rem", fontWeight: 500, cursor: "pointer" }}>
+              继续
+            </button>
+          </form>
+
+          <p style={{ textAlign: "center", marginTop: 16, fontSize: "0.8rem", color: "#806E66" }}>
+            你的测试记录将与此手机号绑定
+          </p>
+        </div>
+      </Modal>
+
+      {/* 测试次数超限弹窗 */}
+      <Modal isOpen={phoneModal === 'limit'} onClose={() => setPhoneModal(null)}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>📅</div>
+          <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 12 }}>今日测试次数已用完</h3>
+          <p style={{ fontSize: "0.95rem", color: "#806E66", marginBottom: 24, lineHeight: 1.7 }}>
+            每天可免费测试{todayRemaining === 0 ? 3 : 3}次<br />
+            明天再来吧
+          </p>
+          <button
+            onClick={() => setPhoneModal(null)}
+            style={{ width: "100%", padding: "14px 32px", backgroundColor: "#C76D4A", color: "#fff", border: "none", borderRadius: 9999, fontSize: "1rem", cursor: "pointer" }}
+          >
+            我知道了
+          </button>
+        </div>
+      </Modal>
+
+      {/* 覆盖确认弹窗 */}
+      <Modal isOpen={phoneModal === 'overwrite'} onClose={() => setPhoneModal(null)}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>📝</div>
+          <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 12 }}>2周内已有记录</h3>
+          <p style={{ fontSize: "0.95rem", color: "#806E66", marginBottom: 24, lineHeight: 1.7 }}>
+            2周内已有测试记录<br />
+            是否用这次结果覆盖？
+          </p>
+          <div style={{ display: "flex", gap: 12 }}>
+            <button
+              onClick={() => handleSaveResult(true)}
+              style={{ flex: 1, padding: "14px 16px", backgroundColor: "#C76D4A", color: "#fff", border: "none", borderRadius: 9999, fontSize: "0.95rem", cursor: "pointer" }}
+            >
+              覆盖
+            </button>
+            <button
+              onClick={() => handleSaveResult(false)}
+              style={{ flex: 1, padding: "14px 16px", backgroundColor: "transparent", color: "#806E66", border: "1.5px solid #EAE0D5", borderRadius: 9999, fontSize: "0.95rem", cursor: "pointer" }}
+            >
+              保留原记录
+            </button>
+          </div>
         </div>
       </Modal>
     </div>

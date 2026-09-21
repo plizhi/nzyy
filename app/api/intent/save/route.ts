@@ -3,7 +3,7 @@ import { query, queryOne } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone, answers, score, ai_insight } = await request.json();
+    const { phone, answers, score, ai_insight, overwrite, record_id } = await request.json();
 
     if (!phone || !answers || score === undefined) {
       return NextResponse.json(
@@ -27,18 +27,32 @@ export async function POST(request: NextRequest) {
 
     const userId = user?.id || null;
 
-    // 保存测试记录
-    const result = await queryOne<{ id: number; created_at: Date }>(
-      `INSERT INTO intent_tests (user_id, phone, answers, score, ai_insight)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, created_at`,
-      [userId, phone, JSON.stringify(answers), score, ai_insight || null]
-    );
+    let result;
+
+    if (overwrite && record_id) {
+      // 覆盖模式：更新已有记录
+      result = await queryOne<{ id: number; created_at: Date }>(
+        `UPDATE intent_tests
+         SET answers = $1, score = $2, ai_insight = $3, created_at = NOW()
+         WHERE id = $4 AND phone = $5
+         RETURNING id, created_at`,
+        [JSON.stringify(answers), score, ai_insight || null, record_id, phone]
+      );
+    } else {
+      // 新增模式
+      result = await queryOne<{ id: number; created_at: Date }>(
+        `INSERT INTO intent_tests (user_id, phone, answers, score, ai_insight)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, created_at`,
+        [userId, phone, JSON.stringify(answers), score, ai_insight || null]
+      );
+    }
 
     return NextResponse.json({
       success: true,
       id: result?.id,
       created_at: result?.created_at,
+      overwritten: !!overwrite,
     });
   } catch (err) {
     console.error("[intent/save error]", err);
