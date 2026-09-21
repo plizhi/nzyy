@@ -84,6 +84,14 @@ export default function HomePage() {
   const [consultForm, setConsultForm] = useState({ name: "", phone: "", age: "", description: "" });
   const [consultSubmitted, setConsultSubmitted] = useState(false);
 
+  // 保存结果相关
+  const [saveModal, setSaveModal] = useState(false);
+  const [savePhone, setSavePhone] = useState("");
+  const [saveSubmitted, setSaveSubmitted] = useState(false);
+  const [savedTestId, setSavedTestId] = useState<number | null>(null);
+  const [historyModal, setHistoryModal] = useState(false);
+  const [historyList, setHistoryList] = useState<any[]>([]);
+
   function handleConsultSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!consultForm.phone) return;
@@ -91,6 +99,44 @@ export default function HomePage() {
     list.push({ ...consultForm, time: new Date().toISOString() });
     localStorage.setItem("nzyy_consults", JSON.stringify(list));
     setConsultSubmitted(true);
+  }
+
+  async function handleSaveSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!savePhone) return;
+    try {
+      const res = await fetch("/api/intent/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: savePhone,
+          answers,
+          score,
+          ai_insight: aiInsight,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSavedTestId(data.id);
+        setSaveSubmitted(true);
+      }
+    } catch (err) {
+      console.error("保存失败", err);
+    }
+  }
+
+  async function handleViewHistory() {
+    if (!savePhone) return;
+    try {
+      const res = await fetch(`/api/intent/history?phone=${encodeURIComponent(savePhone)}`);
+      const data = await res.json();
+      if (data.success) {
+        setHistoryList(data.tests);
+        setHistoryModal(true);
+      }
+    } catch (err) {
+      console.error("获取历史失败", err);
+    }
   }
 
   const totalQuestions = questions.length;
@@ -939,10 +985,27 @@ export default function HomePage() {
             <p style={{ fontSize: "0.9rem", color: colors.textSecondary }}>理论与实践的完整育儿体系</p>
           </footer>
 
-          {/* 注册 + 分享 */}
+          {/* 保存结果 + 分享 */}
           <section style={{ padding: "48px 32px", background: "#FBF7F1" }}>
             <div style={{ maxWidth: 500, margin: "0 auto", display: "flex", flexDirection: "column", gap: 12 }}>
-              <button style={{ display: "block", padding: "16px 32px", backgroundColor: "#f59e0b", color: "#fff", fontWeight: 500, borderRadius: 9999, textAlign: "center", border: "none", cursor: "pointer", fontSize: "1rem" }}>注册 / 登录</button>
+              {!saveSubmitted ? (
+                <button
+                  onClick={() => setSaveModal(true)}
+                  style={{ display: "block", padding: "16px 32px", backgroundColor: "#f59e0b", color: "#fff", fontWeight: 500, borderRadius: 9999, textAlign: "center", border: "none", cursor: "pointer", fontSize: "1rem" }}
+                >
+                  保存结果
+                </button>
+              ) : (
+                <div style={{ textAlign: "center", padding: "16px", background: "rgba(199,109,74,0.1)", borderRadius: 16 }}>
+                  <div style={{ fontSize: "1rem", color: "#C76D4A", marginBottom: 8 }}>已保存</div>
+                  <button
+                    onClick={handleViewHistory}
+                    style={{ fontSize: "0.9rem", color: "#806E66", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
+                  >
+                    查看历史记录
+                  </button>
+                </div>
+              )}
               <button
                 onClick={generatePoster}
                 disabled={isGeneratingPoster}
@@ -1100,6 +1163,68 @@ export default function HomePage() {
             </p>
           </div>
         )}
+      </Modal>
+
+      {/* 保存结果弹窗 */}
+      <Modal isOpen={saveModal} onClose={() => { setSaveModal(false); setSavePhone(""); }}>
+        <div>
+          <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 8, textAlign: "center" }}>保存结果</h3>
+          <p style={{ fontSize: "0.9rem", color: "#806E66", textAlign: "center", marginBottom: 24 }}>输入手机号，永久保存你的测试记录</p>
+
+          <form onSubmit={handleSaveSubmit}>
+            <div style={{ marginBottom: 24 }}>
+              <label style={{ display: "block", fontSize: "0.9rem", color: "#806E66", marginBottom: 8 }}>手机号 *</label>
+              <input
+                type="tel"
+                value={savePhone}
+                onChange={(e) => setSavePhone(e.target.value)}
+                placeholder="用于保存和查询你的测试记录"
+                style={{ width: "100%", padding: "14px 16px", border: "1.5px solid #EAE0D5", borderRadius: 12, fontSize: "1rem", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+
+            <button type="submit" style={{ width: "100%", padding: "14px 32px", backgroundColor: "#C76D4A", color: "#fff", border: "none", borderRadius: 9999, fontSize: "1rem", fontWeight: 500, cursor: "pointer" }}>
+              保存
+            </button>
+          </form>
+
+          <p style={{ textAlign: "center", marginTop: 16, fontSize: "0.8rem", color: "#806E66" }}>
+            同一手机号可保存多次，查看历史变化
+          </p>
+        </div>
+      </Modal>
+
+      {/* 历史记录弹窗 */}
+      <Modal isOpen={historyModal} onClose={() => setHistoryModal(false)}>
+        <div>
+          <h3 style={{ fontFamily: "'Noto Serif SC', serif", fontSize: "1.4rem", color: "#3E2C2C", marginBottom: 8, textAlign: "center" }}>历史记录</h3>
+          <p style={{ fontSize: "0.9rem", color: "#806E66", textAlign: "center", marginBottom: 24 }}>你共保存了 {historyList.length} 次测试</p>
+
+          <div style={{ maxHeight: 400, overflowY: "auto" }}>
+            {historyList.map((item, index) => (
+              <div key={item.id} style={{ padding: "16px", background: index === 0 ? "rgba(199,109,74,0.08)" : "#F9F6F2", borderRadius: 12, marginBottom: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ fontSize: "0.9rem", color: "#3E2C2C", fontWeight: 500 }}>
+                    {index === 0 ? "最新" : `第${index + 1}次`}
+                  </span>
+                  <span style={{ fontSize: "0.8rem", color: "#806E66" }}>
+                    {new Date(item.created_at).toLocaleDateString("zh-CN")}
+                  </span>
+                </div>
+                <div style={{ fontSize: "0.85rem", color: "#806E66" }}>
+                  共鸣度：<span style={{ color: "#C76D4A", fontWeight: 500 }}>{item.score}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={() => setHistoryModal(false)}
+            style={{ width: "100%", padding: "14px 32px", marginTop: 16, backgroundColor: "transparent", color: "#806E66", border: "1.5px solid #EAE0D5", borderRadius: 9999, fontSize: "0.95rem", cursor: "pointer" }}
+          >
+            关闭
+          </button>
+        </div>
       </Modal>
     </div>
   );
