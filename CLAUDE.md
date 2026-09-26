@@ -229,25 +229,29 @@ lzti.nzyy.ltd → 乌服:3010 (lzti-dev)
 | JWKS 端点 | ✅ | /.well-known/jwks.json |
 | authorize 端点 | ✅ | /oauth/authorize |
 | 邀请创建 | ✅ | /src/invite.js |
+| 激活 GET 页面 | ✅ | /activate (GET) |
+| 激活 POST | ⏳ | 需要 form-parser |
 | 反向冒烟 | ✅ | AUTH_CLIENTS 未配置时启动即死 |
-| PM2 守护 | ⏳ | 目前前台运行，测试命令见下方 |
-| 邀请激活 | ⏳ | 待下游接入 |
-| 完整 OAuth 流程 | ⏳ | 待 wxcl-dev 接入 |
+| PM2 守护 | ✅ | ecosystem.config.cjs 已配置 |
+| wxcl-dev 接入 | ⏳ | 环境变量已改，等待联调 |
 
 ### auth-dev 服务命令
 
 ```bash
-# 启动（前台）
-cd /srv/nzyy-auth-dev && source .env.dev && node src/server.js
+# PM2 启动
+pm2 start /srv/nzyy-auth-dev/ecosystem.config.cjs
 
-# 启动（后台）
-cd /srv/nzyy-auth-dev && source .env.dev && nohup node src/server.js > auth.log 2>&1 &
+# PM2 查看状态
+pm2 list | grep auth
+
+# PM2 查看日志
+pm2 logs nzyy-auth-dev
+
+# PM2 重启
+pm2 restart nzyy-auth-dev
 
 # 创建邀请
 cd /srv/nzyy-auth-dev && source .env.dev && node src/invite.js +86138xxxxxxx wxcl-dev admin "test"
-
-# 查看日志
-cat /srv/nzyy-auth-dev/auth.log
 
 # 测试端点
 curl http://127.0.0.1:3012/.well-known/jwks.json
