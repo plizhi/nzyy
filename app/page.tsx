@@ -99,6 +99,9 @@ export default function HomePage() {
   const [historyModal, setHistoryModal] = useState(false);
   const [historyList, setHistoryList] = useState<any[]>([]);
 
+  // 是否有测试记录（用于判断是否显示跳过按钮）
+  const [hasTestRecord, setHasTestRecord] = useState(false);
+
   function handleConsultSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!consultForm.phone) return;
@@ -203,9 +206,13 @@ export default function HomePage() {
   useEffect(() => {
     setMounted(true);
 
-    // 检查是否已测试过，直接显示结果
+    // 检查是否已测试过
     const savedData = getIntentData();
-    if (savedData.answers && savedData.answers.length === 9) {
+    const hasRecord = savedData.answers && savedData.answers.length === 9;
+    setHasTestRecord(!!hasRecord);
+
+    if (hasRecord && savedData.answers) {
+      // 有记录：直接显示结果（再次访问用户）
       setAnswers(savedData.answers);
       setScore(savedData.共鸣度 || 0);
       setStep("result");
@@ -556,39 +563,117 @@ export default function HomePage() {
             </div>
 
             {/* 召唤按钮 */}
-            <a
-              onClick={() => setStep("test")}
-              className="cursor-pointer"
-              style={{
-                display: "inline-block",
-                textDecoration: "none",
-                fontFamily: "'Noto Serif SC', serif",
-                background: colors.accent,
-                color: colors.bg,
-                fontSize: "1.2rem",
-                fontWeight: 500,
-                padding: "16px 56px",
-                borderRadius: 50,
-                letterSpacing: "0.15em",
-                boxShadow: "0 8px 30px rgba(199, 109, 74, 0.15)",
-                transition: "all 0.3s ease",
-                animation: "fadeUp 1.4s ease-out 0.4s backwards",
-                cursor: "pointer",
-                border: "none",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-3px)";
-                e.currentTarget.style.boxShadow = "0 12px 36px rgba(199, 109, 74, 0.25)";
-                e.currentTarget.style.background = colors.accentHover;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 30px rgba(199, 109, 74, 0.15)";
-                e.currentTarget.style.background = colors.accent;
-              }}
-            >
-              对齐育儿初心
-            </a>
+            {hasTestRecord ? (
+              // 再次访问：显示两个按钮
+              <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+                <a
+                  onClick={() => setStep("test")}
+                  className="cursor-pointer"
+                  style={{
+                    display: "inline-block",
+                    textDecoration: "none",
+                    fontFamily: "'Noto Serif SC', serif",
+                    background: colors.accent,
+                    color: colors.bg,
+                    fontSize: "1.2rem",
+                    fontWeight: 500,
+                    padding: "16px 40px",
+                    borderRadius: 50,
+                    letterSpacing: "0.15em",
+                    boxShadow: "0 8px 30px rgba(199, 109, 74, 0.15)",
+                    transition: "all 0.3s ease",
+                    animation: "fadeUp 1.4s ease-out 0.4s backwards",
+                    cursor: "pointer",
+                    border: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-3px)";
+                    e.currentTarget.style.boxShadow = "0 12px 36px rgba(199, 109, 74, 0.25)";
+                    e.currentTarget.style.background = colors.accentHover;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 8px 30px rgba(199, 109, 74, 0.15)";
+                    e.currentTarget.style.background = colors.accent;
+                  }}
+                >
+                  对齐育儿初心
+                </a>
+                <a
+                  onClick={() => {
+                    const savedData = getIntentData();
+                    if (savedData.answers) {
+                      setAnswers(savedData.answers);
+                      setScore(savedData.共鸣度 || 0);
+                      setStep("result");
+                      setShowResult(true);
+                    }
+                  }}
+                  className="cursor-pointer"
+                  style={{
+                    display: "inline-block",
+                    textDecoration: "none",
+                    fontFamily: "'Noto Sans SC', sans-serif",
+                    background: "transparent",
+                    color: colors.textSecondary,
+                    fontSize: "1.1rem",
+                    fontWeight: 500,
+                    padding: "16px 40px",
+                    borderRadius: 50,
+                    letterSpacing: "0.1em",
+                    border: "1.5px solid rgba(128, 110, 102, 0.3)",
+                    transition: "all 0.3s ease",
+                    animation: "fadeUp 1.4s ease-out 0.4s backwards",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = colors.accent;
+                    e.currentTarget.style.color = colors.accent;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(128, 110, 102, 0.3)";
+                    e.currentTarget.style.color = colors.textSecondary;
+                  }}
+                >
+                  查看我的结果
+                </a>
+              </div>
+            ) : (
+              // 首次访问：只显示一个按钮
+              <a
+                onClick={() => setStep("test")}
+                className="cursor-pointer"
+                style={{
+                  display: "inline-block",
+                  textDecoration: "none",
+                  fontFamily: "'Noto Serif SC', serif",
+                  background: colors.accent,
+                  color: colors.bg,
+                  fontSize: "1.2rem",
+                  fontWeight: 500,
+                  padding: "16px 56px",
+                  borderRadius: 50,
+                  letterSpacing: "0.15em",
+                  boxShadow: "0 8px 30px rgba(199, 109, 74, 0.15)",
+                  transition: "all 0.3s ease",
+                  animation: "fadeUp 1.4s ease-out 0.4s backwards",
+                  cursor: "pointer",
+                  border: "none",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow = "0 12px 36px rgba(199, 109, 74, 0.25)";
+                  e.currentTarget.style.background = colors.accentHover;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 8px 30px rgba(199, 109, 74, 0.15)";
+                  e.currentTarget.style.background = colors.accent;
+                }}
+              >
+                对齐育儿初心
+              </a>
+            )}
           </div>
         </main>
       )}

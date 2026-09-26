@@ -130,6 +130,17 @@ nzyy.cc/
 
 ## 部署
 
+### 服务端口映射（2026-09-22）
+
+| 域名 | 端口 | PM2 进程 | 代码分支 |
+|------|------|----------|----------|
+| lzti.nzyy.ltd | 3010 | lzti-dev | dev-work |
+| lzti.nzyy.cc | 3000 | lzti | master |
+| wxcl.nzyy.ltd | 3011 | wxcl-v2-dev | dev-work |
+| wxcl.nzyy.cc | 3008 | wxcl-v2 | master |
+| nzyy.cc | 3009 | nzyy | master |
+| auth.nzyy.ltd | 3012 | nzyy-auth-dev | - |
+
 ### PM2 配置（ecosystem.config.js）
 
 ```js
@@ -187,6 +198,113 @@ module.exports = {
 | 望杏成林 | /home/pupeng/projects/wxcl-v2 | 生产 |
 | 望杏成林开发 | /home/pupeng/projects/wxcl-v2-dev | 开发 |
 | 朋大大故事 | /home/pupeng/projects/peng-story | 备份源文件 |
+| nzyy-auth | /srv/nzyy-auth-dev | SSO 认证服务（开发环境）|
+
+---
+
+## SSO 身份互通（v1.3 方案）
+
+### 架构
+
+```
+港服（nginx + SSL 终止）
+    ↓
+auth.nzyy.ltd → 乌服:3012 (auth-dev)
+auth.nzyy.cc → 乌服:3011 (auth-prod, 待部署)
+    ↓
+wxcl.nzyy.ltd → 乌服:3011 (wxcl-dev)
+lzti.nzyy.ltd → 乌服:3010 (lzti-dev)
+```
+
+### auth-dev 部署状态（2026-09-26）
+
+| 项目 | 状态 | 说明 |
+|------|-------|------|
+| 项目代码 | ✅ | /srv/nzyy-auth-dev |
+| 数据库 | ✅ | nzyy_auth_dev 已创建 |
+| Prisma Schema | ✅ | 四表已同步到数据库 |
+| RSA 密钥 | ✅ | keys/private.pem, public.pem |
+| 环境变量 | ✅ | .env.dev 已配置 |
+| nginx (港服) | ✅ | auth.nzyy.ltd → 3012 |
+| JWKS 端点 | ✅ | /.well-known/jwks.json |
+| authorize 端点 | ✅ | /oauth/authorize |
+| 邀请创建 | ✅ | /src/invite.js |
+| 反向冒烟 | ✅ | AUTH_CLIENTS 未配置时启动即死 |
+| PM2 守护 | ⏳ | 目前前台运行，测试命令见下方 |
+| 邀请激活 | ⏳ | 待下游接入 |
+| 完整 OAuth 流程 | ⏳ | 待 wxcl-dev 接入 |
+
+### auth-dev 服务命令
+
+```bash
+# 启动（前台）
+cd /srv/nzyy-auth-dev && source .env.dev && node src/server.js
+
+# 启动（后台）
+cd /srv/nzyy-auth-dev && source .env.dev && nohup node src/server.js > auth.log 2>&1 &
+
+# 创建邀请
+cd /srv/nzyy-auth-dev && source .env.dev && node src/invite.js +86138xxxxxxx wxcl-dev admin "test"
+
+# 查看日志
+cat /srv/nzyy-auth-dev/auth.log
+
+# 测试端点
+curl http://127.0.0.1:3012/.well-known/jwks.json
+curl "http://127.0.0.1:3012/oauth/authorize?client_id=wxcl-dev&redirect_uri=https://wxcl.nzyy.ltd/api/auth/callback"
+```
+
+### auth-dev 环境变量（.env.dev）
+
+```
+NODE_ENV=development
+PORT=3012
+AUTH_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/nzyy_auth_dev
+WXCL_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/wxcl_dev
+JWT_ISSUER=https://auth.nzyy.ltd
+COOKIE_DOMAIN=.nzyy.ltd
+AUTH_CLIENTS=wxcl-dev,lzti-dev
+CLIENT_WXCL_DEV_SECRET=<独立生成>
+CLIENT_WXCL_DEV_REDIRECT_URI=https://wxcl.nzyy.ltd/api/auth/callback
+CLIENT_LZTI_DEV_SECRET=<独立生成>
+CLIENT_LZTI_DEV_REDIRECT_URI=https://lzti.nzyy.ltd/api/auth/callback
+```
+
+### 下游接入待办
+
+- [ ] wxcl-v2-dev 接入 SSO（配置 AUTH_BASE_URL=https://auth.nzyy.ltd）
+- [ ] lzti-dev 接入 SSO
+- [ ] 生产 auth 部署（auth.nzyy.cc, port 3011）
+- [ ] 生产下游接入
+
+### 港服 nginx 配置（auth.nzyy.ltd）
+
+```
+/etc/nginx/sites-available/auth.nzyy.ltd
+```
+
+---
+
+## 首页引导页改动（2026-09-25）
+
+### 改动内容
+
+引导页增加"查看我的结果"按钮：
+- 首次访问用户：只显示"对齐育儿初心"按钮
+- 再次访问用户（有测试记录）：显示"对齐育儿初心" + "查看我的结果"两个按钮
+
+### 代码位置
+
+- 文件：app/page.tsx
+- 改动：引导页按钮区域（约 line 558-640）
+- 逻辑：基于 hasTestRecord state 判断显示
+
+### 验证
+
+- TypeScript 检查通过
+- 需要 PM2 重启加载新代码
+
+---
 
 <!-- BEGIN:nextjs-agent-rules -->
 
