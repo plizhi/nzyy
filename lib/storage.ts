@@ -9,6 +9,13 @@ export interface IntentData {
   共鸣度?: number;
 }
 
+const RETEST_COUNT_KEY = "nzyy_retest_count";
+
+export interface RetestCount {
+  date: string; // YYYY-MM-DD
+  count: number;
+}
+
 export function saveIntentData(data: Partial<IntentData>): void {
   if (typeof window === "undefined") return;
   try {
@@ -34,6 +41,39 @@ export function clearIntentData(): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // localStorage 不可用时静默失败
+  }
+}
+
+export function getTodayRetestCount(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = localStorage.getItem(RETEST_COUNT_KEY);
+    if (!raw) return 0;
+    const data: RetestCount = JSON.parse(raw);
+    const today = new Date().toISOString().split("T")[0];
+    if (data.date !== today) return 0;
+    return data.count;
+  } catch {
+    return 0;
+  }
+}
+
+export function incrementTodayRetestCount(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const raw = localStorage.getItem(RETEST_COUNT_KEY);
+    let data: RetestCount = { date: today, count: 0 };
+    if (raw) {
+      const existing: RetestCount = JSON.parse(raw);
+      if (existing.date === today) {
+        data = existing;
+      }
+    }
+    data.count += 1;
+    localStorage.setItem(RETEST_COUNT_KEY, JSON.stringify(data));
   } catch {
     // localStorage 不可用时静默失败
   }
