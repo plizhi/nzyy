@@ -141,6 +141,17 @@ nzyy.cc/
 | nzyy.cc | 3009 | nzyy | master |
 | auth.nzyy.ltd | 3012 | nzyy-auth-dev | - |
 
+### 开发目录
+
+```
+nzyy.cc     → /home/pupeng/projects/nzyy.cc     → main 分支（生产）
+nzyy-dev    → /home/pupeng/projects/nzyy-dev    → dev-work 分支（开发）
+```
+
+**改代码一律在 `nzyy-dev`**，提交后推 `dev-work`。生产目录 `/home/pupeng/projects/nzyy.cc` 只 pull，不产生 commit，不留未提交改动。
+
+2026-10-23 之前 nzyy.cc 没有开发目录，代码直接写进生产目录且从未提交，导致一次 `git pull` 被本地改动阻断、10 天前的功能代码差点丢失。现已补齐。
+
 ### PM2 配置
 
 本机所有实例的启动配置**统一在 `/home/pupeng/projects/deploy/ecosystem.config.js`**，各项目仓库里不再放 ecosystem 文件。
