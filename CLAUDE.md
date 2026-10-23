@@ -219,6 +219,7 @@ lzti.nzyy.ltd → 乌服:3010 (lzti-dev)
 | 激活 POST | ⏳ | 需要 form-parser |
 | 反向冒烟 | ✅ | AUTH_CLIENTS 未配置时启动即死 |
 | PM2 守护 | ✅ | 已登记到 /home/pupeng/projects/deploy/ecosystem.config.js |
+| HTTPS 验证 | ✅ | auth.nzyy.ltd 访问正常 |
 | wxcl-dev 接入 | ⏳ | 环境变量已改，等待联调 |
 
 ### auth-dev 服务命令
@@ -273,9 +274,24 @@ CLIENT_LZTI_DEV_REDIRECT_URI=https://lzti.nzyy.ltd/api/auth/callback
 /etc/nginx/sites-available/auth.nzyy.ltd
 ```
 
+### 关键技术问题：阿里云香港节点备案检测
+
+**问题现象**：nginx 代理 upstream 时，响应被替换为 403 ICP 备案页面。
+
+**根因**：阿里云对 HTTP 响应中的 `Host` 头进行备案检测，未备案域名触发拦截。
+
+**解决方案**：nginx 配置使用 `proxy_set_header Host $proxy_host` 而非 `$host`。
+
+```nginx
+location / {
+    proxy_pass http://auth_dev_backend;
+    proxy_set_header Host $proxy_host;  # 绕过阿里云备案检测
+}
+```
+
 ---
 
-## 首页引导页改动（2026-09-25）
+## 首页引导页改动（2026-09-26）
 
 ### 改动内容
 
@@ -292,7 +308,7 @@ CLIENT_LZTI_DEV_REDIRECT_URI=https://lzti.nzyy.ltd/api/auth/callback
 ### 验证
 
 - TypeScript 检查通过
-- 需要 PM2 重启加载新代码
+- PM2 重启：`pm2 restart nzyy`
 
 ---
 
