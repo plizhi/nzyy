@@ -137,35 +137,21 @@ nzyy.cc/
 | lzti.nzyy.ltd | 3010 | lzti-dev | dev-work |
 | lzti.nzyy.cc | 3000 | lzti | master |
 | wxcl.nzyy.ltd | 3011 | wxcl-v2-dev | dev-work |
-| wxcl.nzyy.cc | 3008 | wxcl-v2 | master |
+| wxcl.nzyy.cc | 3006 | wxcl-v2 | master |
 | nzyy.cc | 3009 | nzyy | master |
 | auth.nzyy.ltd | 3012 | nzyy-auth-dev | - |
 
-### PM2 配置（ecosystem.config.js）
+### PM2 配置
 
-```js
-module.exports = {
-  apps: [
-    {
-      name: 'nzyy',
-      script: 'node_modules/.bin/next',
-      args: 'start',
-      instances: 1,
-      autorestart: true,
-      watch: false,
-      max_memory_restart: '500M',
-      env: {
-        NODE_ENV: 'production',
-        PORT: 3009,
-      },
-      error_file: './logs/error.log',
-      out_file: './logs/out.log',
-      log_file: './logs/combined.log',
-      time: true,
-    },
-  ],
-};
+本机所有实例的启动配置**统一在 `/home/pupeng/projects/deploy/ecosystem.config.js`**，各项目仓库里不再放 ecosystem 文件。
+
+```bash
+cd /home/pupeng/projects/deploy
+pm2 restart nzyy   # 重启单个实例（最常用）
+pm2 save            # 刷新 dump.pm2，重启机器后靠它恢复
 ```
+
+新增应用或改端口，都改那个目录里的配置。
 
 ### Nginx 配置
 
@@ -232,14 +218,14 @@ lzti.nzyy.ltd → 乌服:3010 (lzti-dev)
 | 激活 GET 页面 | ✅ | /activate (GET) |
 | 激活 POST | ⏳ | 需要 form-parser |
 | 反向冒烟 | ✅ | AUTH_CLIENTS 未配置时启动即死 |
-| PM2 守护 | ✅ | ecosystem.config.cjs 已配置 |
+| PM2 守护 | ✅ | 已登记到 /home/pupeng/projects/deploy/ecosystem.config.js |
 | wxcl-dev 接入 | ⏳ | 环境变量已改，等待联调 |
 
 ### auth-dev 服务命令
 
 ```bash
-# PM2 启动
-pm2 start /srv/nzyy-auth-dev/ecosystem.config.cjs
+# PM2 启动（配置在 /home/pupeng/projects/deploy/ecosystem.config.js）
+pm2 start /home/pupeng/projects/deploy/ecosystem.config.js --only nzyy-auth-dev
 
 # PM2 查看状态
 pm2 list | grep auth
