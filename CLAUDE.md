@@ -207,11 +207,17 @@ pm2 save            # 刷新 dump.pm2，重启机器后靠它恢复
 港服（nginx + SSL 终止）
     ↓
 auth.nzyy.ltd → 乌服:3012 (auth-dev)
-auth.nzyy.cc → 乌服:3011 (auth-prod, 待部署)
+auth.nzyy.cc → 乌服:3013 (auth-prod, 待部署)
     ↓
 wxcl.nzyy.ltd → 乌服:3011 (wxcl-dev)
 lzti.nzyy.ltd → 乌服:3010 (lzti-dev)
 ```
+
+> 生产 auth 实例的落地清单（独立库 `nzyy_auth`、独立 env：`JWT_ISSUER` 用 `.cc`、
+> `COOKIE_DOMAIN` 用 `.nzyy.cc`、pg_dump 定时任务）见
+> `lzti-dev/knowledge/跨应用账号体系方案.md` 的「〇之五」。
+> **生产账户层不能放在 auth-dev 上**：这台机器上所有数据库都没有备份，
+> 且 dev 模式的 session cookie 不带 `__Secure-` 前缀。
 
 ### auth-dev 部署状态（2026-09-26）
 
@@ -275,7 +281,7 @@ CLIENT_LZTI_DEV_REDIRECT_URI=https://lzti.nzyy.ltd/api/auth/callback
 
 - [ ] wxcl-v2-dev 接入 SSO（配置 AUTH_BASE_URL=https://auth.nzyy.ltd）
 - [ ] lzti-dev 接入 SSO
-- [ ] 生产 auth 部署（auth.nzyy.cc, port 3011）
+- [ ] 生产 auth 部署（auth.nzyy.cc, port 3013；3011 已被 wxcl-v2-dev 占用）
 - [ ] 生产下游接入
 
 ### 港服 nginx 配置（auth.nzyy.ltd）
