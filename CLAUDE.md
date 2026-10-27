@@ -184,7 +184,7 @@ pm2 save            # 刷新 dump.pm2，重启机器后靠它恢复
 | 望杏成林 | /home/pupeng/projects/wxcl-v2 | 生产 |
 | 望杏成林开发 | /home/pupeng/projects/wxcl-v2-dev | 开发 |
 | 朋大大故事 | /home/pupeng/projects/peng-story | 备份源文件 |
-| nzyy-auth | /srv/nzyy-auth-dev | SSO 认证服务（开发环境）|
+| nzyy-auth | /srv/nzyy-auth-dev | SSO 认证服务（**dev 与 prod 共用此目录**，改代码要双实例重启）|
 
 ---
 
@@ -196,11 +196,14 @@ pm2 save            # 刷新 dump.pm2，重启机器后靠它恢复
 港服（nginx + SSL 终止）
     ↓
 auth.nzyy.ltd → 乌服:3012 (auth-dev)
-auth.nzyy.cc → 乌服:3011 (auth-prod, 待部署)
+auth.nzyy.cc → 乌服:3013 (auth-prod，已开通)
     ↓
 wxcl.nzyy.ltd → 乌服:3011 (wxcl-dev)
 lzti.nzyy.ltd → 乌服:3010 (lzti-dev)
 ```
+
+> 端口订正（2026-10-26）：生产 auth 是 **3013**，不是 3011（3011 被 wxcl-v2-dev 占用，3012 是 auth-dev）。
+> 两个 auth 实例**共用同一代码目录** `/srv/nzyy-auth-dev`，改代码必须双实例重启。
 
 ### auth-dev 部署状态（2026-09-26）
 
@@ -214,13 +217,14 @@ lzti.nzyy.ltd → 乌服:3010 (lzti-dev)
 | nginx (港服) | ✅ | auth.nzyy.ltd → 3012 |
 | JWKS 端点 | ✅ | /.well-known/jwks.json |
 | authorize 端点 | ✅ | /oauth/authorize |
-| 邀请创建 | ✅ | /src/invite.js |
+| 邀请创建 | ✅ | /src/invite.js（凭据签发接口 `POST /internal/invites` 见账号体系一节） |
 | 激活 GET 页面 | ✅ | /activate (GET) |
-| 激活 POST | ⏳ | 需要 form-parser |
+| 激活 POST | ✅ | 已通 |
 | 反向冒烟 | ✅ | AUTH_CLIENTS 未配置时启动即死 |
 | PM2 守护 | ✅ | 已登记到 /home/pupeng/projects/deploy/ecosystem.config.js |
 | HTTPS 验证 | ✅ | auth.nzyy.ltd 访问正常 |
-| wxcl-dev 接入 | ⏳ | 环境变量已改，等待联调 |
+| wxcl-dev 接入 | ✅ | 一次性 token 链路已通（2026-10-24） |
+| 生产实例 | ✅ | auth.nzyy.cc → 乌服 **3013**（2026-10-25，与 dev 共用代码目录） |
 
 ### auth-dev 服务命令
 
@@ -263,15 +267,86 @@ CLIENT_LZTI_DEV_REDIRECT_URI=https://lzti.nzyy.ltd/api/auth/callback
 
 ### 下游接入待办
 
-- [ ] wxcl-v2-dev 接入 SSO（配置 AUTH_BASE_URL=https://auth.nzyy.ltd）
-- [ ] lzti-dev 接入 SSO
-- [ ] 生产 auth 部署（auth.nzyy.cc, port 3011）
-- [ ] 生产下游接入
+- [x] wxcl-v2-dev 接入 SSO（一次性 token 链路已通，2026-10-24）
+- [x] lzti-dev 接入 SSO（2026-10-24）
+- [x] 生产 auth 部署（auth.nzyy.cc, port **3013**，2026-10-25）
+- [ ] 生产下游接入（等统一账号体系，见下节）
 
-### 港服 nginx 配置（auth.nzyy.ltd）
+---
+
+## 跨应用账号体系（2026-10-26）
+
+> 详细方案见 `/home/pupeng/projects/lzti-dev/knowledge/跨应用账号体系方案.md`（含〇之七查证事实、〇之八实测、〇之九 B3 落地）。
+
+### 一句话现状
+
+**管道全通，用户还登不了**——两端都是空的：
+
+| 检查项 | 生产实况（2026-10-26 实测） |
+|---|---|
+| 生产 auth 身份库 `AuthUser` | **0 行** |
+| 生产 auth `AuthAuditLog` | **0 行** |
+| 生产 wxcl 用户 | 39 个（38 有手机号） |
+| 其中归属已证明（`phone_verified_at` 非空） | **0 个** |
+| 其中有本地密码且有手机号 | 12 个（归属未证明，申请不了统一密码） |
+| 生产 wxcl / lzti 登录页 | `ssoEnabled: false` —— SSO 入口未渲染 |
+
+### 已落地的批次
+
+| 批 | 内容 | 状态 |
+|---|---|---|
+| B0 | wxcl 通用码越权路径修复 + 存量 25 条通用码作废 | ✅ 提交 `b8caaea` |
+| B1 | auth `/activate` 改 upsert、wxcl audience + 409、两端 fetch 超时 | ✅ `140c377` / `b69e9b1` / `39ac331` |
+| B2 | auth 凭据签发接口 `POST /internal/invites` + wxcl 统一账号密码入口 | ✅ 2026-10-26 |
+| B3 | 登记接口 `POST /internal/registrations` + `AuthAuditLog` + wxcl 两个 hook | ✅ 提交 `210d7cd` / `425a759` / `e5faa79` |
+| B4 | 开 SSO 入口 | ⏳ 判据未达 |
+
+### 唯一闸门（阻塞后面所有事）
+
+**运营把 11 张专属码发给用户**（台账在 `/home/pupeng/projects/ops/wxcl-activation-codes-2026-10-26.json`，**不入 git**，权限 600）。
+
+链路：用户激活 → 自动登记 → 设统一密码 → 生产身份库才出现第一个账号。
+
+**闸门没开之前不要开 SSO 入口**——否则会出现「点了登不进去」的半成品状态。
+
+### 新发现的缺口：3 个真人号被漏掉
+
+`18611149931`、`18601041357`、`18618309001`。
+
+这 3 个有 wxcl 本地密码、能正常登录，但手机号归属没被证明过（`phone_verified_at` 为 NULL）→ 登记的 gate 不放行 → **拿不到统一密码，也进不了跨应用体系**。
+
+11 张码覆盖的是「无密码、登不进去」的 11 人；要不要给这 3 个也发码是运营决策——发就全员覆盖，不发就是自愿让他们留在体系外。
+
+> **本轮结论：建议一次发 14 张（11 + 3）**，否则这 3 个真人号会卡在门外。签发需朋大大授权。
+
+### 剩余待办
+
+| 事项 | 判据 |
+|---|---|
+| B4 开 SSO 入口 | 差 5 个带统一密码的真人号（现 0）。技术上还差两应用各 4 个 env + 重新 build。顺序上必须先做完闸门，否则会出现「点了登不进去」的入口 |
+| lzti 接登记 hook | 等 lzti 有归属证明通道（专属码/短信） |
+| lzti 侧统一密码入口 | 同上 |
+| outbox 重试队列 | 等 hook 丢失率显现问题 |
+| 周对账 | 规格要求「每周对账一次」，B3 只做了审计表和补登脚本，**周对账还没做**（备份还原校验 ≠ 账号层对账） |
+| 补登脚本生产验证 | `src/register-batch.js` 在生产没跑过（生产集合为 0），发码后再跑一次验证 |
+| 生产 wxcl Intent 枚举 | 缺 `venting`（历史漂移，与账号体系无关，但将来 db push 会撞） |
+
+### 风险项
+
+- **deploy 仓库无远端**：`/home/pupeng/projects/deploy/` 的 pm2 配置与部署脚本只存在本机，单点风险。需授权建 GitHub 私有库。
+- **GitHub Actions 自动部署**：一直挂着「想好了再实现」，未动。
+
+### 已核实无需处理
+
+- 备份 2026-10-26 03:17 八个库全 OK，`backup/verify_restore.sh` 还原校验通过。
+- 生产那两张弱口令种子码（123456/654321）都已被消费（一次性码已作废），不是风险。
+- `apply_rewards` 外键缺失可安全后补（无孤儿行）。
+
+### 港服 nginx 配置（auth 服务）
 
 ```
 /etc/nginx/sites-available/auth.nzyy.ltd
+/etc/nginx/sites-available/auth.nzyy.cc
 ```
 
 ### 关键技术问题：阿里云香港节点备案检测
